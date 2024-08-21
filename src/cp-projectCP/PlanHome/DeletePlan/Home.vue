@@ -1,18 +1,17 @@
 <template>
-    <ButtonSlotView 
-    :Confirm="handleConfirm"
-    >
-    </ButtonSlotView>
+  <ButtonSlotView :buttonStyle="{ color: 'red' }" :info="'请联系管理员,输入密码,才能删除。'" :buttonName="'删除'"
+    :Confirm="handleConfirm">
+  </ButtonSlotView>
 </template>
 
 <script setup lang="ts">
-  import ButtonSlotView from '@/cp-v1/cp-GCP/Button/ButtonSlot.vue'
-  import { usePlanStore } from "@/stores/plan";
+import ButtonSlotView from '@/cp-v1/cp-GCP/Button/ButtonSlot.vue'
+import { usePlanStore } from "@/stores/plan";
 import message from 'ant-design-vue/es/message';
 
-  const planStore = usePlanStore();
+const planStore = usePlanStore();
 
-  const handleConfirm = async (password: string) => {
+const handleConfirm = async (password: string) => {
   if (password === '8888') {
     await planStore.delete(planStore.data.selectID as string);
     // await planStore.read();
@@ -22,6 +21,4 @@ import message from 'ant-design-vue/es/message';
 };
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

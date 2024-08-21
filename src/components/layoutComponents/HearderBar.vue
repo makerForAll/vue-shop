@@ -1,75 +1,107 @@
 <template>
-    <a-layout-header class="header">
-        <div class="logo">
-            <span>商铺->运营->租、卖</span>
+    <a-layout-header theme="light" id="header" class="header">
+        <div>
         </div>
+        <div class="party">
+            <span>{{ store.data.UItem.name }}</span>
+        </div>
+        <!-- <a-flex justify="flex-end" align="flex-end"> -->
+        <a-space style="margin-left: auto;">
+            <!-- <a-button style="background: orange;" type="dashed" ghost @click="zoomOut">缩小</a-button>
+            <a-button style="background: orange;" type="dashed" ghost @click="zoomIn">放大</a-button> -->
+        </a-space>
+
+        <!-- </a-flex> -->
+        <!-- 
         <a-menu mode="horizontal" style="float:right">
             <a-sub-menu key="sub1">
                 <template #title>用户设置</template>
-                <a-menu-item key="setting:1">
-
-                    <!-- <RouterLink :to="`/staticResourceManagementHome`"
-                        class="link-dark d-inline-flex text-decoration-none rounded">
-                        静态文件综合</RouterLink> -->
-                </a-menu-item>
-                <a-menu-item key="setting:2">
-                    <!-- <RouterLink :to="`/ossFiles`" class="link-dark d-inline-flex text-decoration-none rounded">
-                        OSS源文件差异管理</RouterLink> -->
-                </a-menu-item>
-                <a-menu-item key="setting:3">个人信息</a-menu-item>
-                <a-menu-item key="setting:4" @click="onLogout"> 退出登录</a-menu-item>
-            </a-sub-menu>
-
-        </a-menu>
-
+<a-menu-item key="setting:1">
+</a-menu-item>
+<a-menu-item key="setting:2">
+</a-menu-item>
+<a-menu-item key="setting:3">个人信息</a-menu-item>
+<a-menu-item key="setting:4" @click="onLogout"> 退出登录</a-menu-item>
+</a-sub-menu>
+</a-menu> -->
     </a-layout-header>
+    <!-- <a-layout-header style="background: gray; padding: 0" /> -->
 </template>
 <script setup lang="ts">
-import { defineComponent, onMounted, ref, toRefs, watch } from 'vue';
+import { ref } from 'vue';
 import router from '@/router'
 // import useHeaderStore from '@/stores/header'
 // import useUserStore from '@/stores/user';
 import { message } from 'ant-design-vue';
+import { usePartyStore } from '@/stores';
 // const headerStore = useHeaderStore();
 // const userStore = useUserStore();
 // const { companyCode, lastSegment } = toRefs(headerStore);
+// const headerStore = useHeaderStore();
 
 const getUrl = ref(window.location.href);
 const segments = ref(getUrl.value.split('/'));
 
 const onLogout = () => {
-    userStore.logout();
+    // userStore.logout();
     message.success("退出登录成功");
     router.push('/login');
 }
+
+// -----------------
+const props = defineProps({
+    partyId: {
+        type: String,
+        default: ''
+    }
+})
+const store = usePartyStore();
+// --------------------------------- 缩小放大
+
 </script>
 <style>
-.logo {
-    float: left;
-    width: 150px;
-    height: 31px;
-    margin: 16px 0px 16px 0;
-    background: rgba(255, 255, 255, .3);
+/*------------------------*/
+
+.party {
+    font-size: 24px;
+    font-weight: bold;
+    background: linear-gradient(to right, #FFC1CC, #B3E5FC, #C8E6C9, #D1C4E9);
+    /* 从粉红到淡蓝，再到淡绿，最后到淡紫的渐变 */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+
+}
+
+header#header {
+    background:
+        linear-gradient(to right, #1b1f23 10%, #c2593e 30%, #feb47b 100%);
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+    /* 内阴影 */
+    color: white;
+    height: 60px;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    color: gold;
+    /* align-items: center; */
+    /* justify-content: center; */
+    font-size: 24px;
 }
 
-.header {
-    padding-inline: 24px !important;
-
+/******/
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    /* 避免出现滚动条 */
 }
 
-/* .logo>span{
+#app {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
     position: relative;
-    color: coral;
-    padding: 20px;
-} */
-/* .logo:before{
-    content: "This is before text.";
-    margin: 16px 24px 16px 0;
-    position: relative;
-    bottom: 0;
-}  */
+}
 </style>

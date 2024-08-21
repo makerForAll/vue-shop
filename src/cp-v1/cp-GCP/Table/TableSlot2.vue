@@ -30,15 +30,15 @@
 import { computed } from 'vue';
 import type { TableProps } from 'ant-design-vue';
 import { usePagination } from 'vue-request';
-// import { clientColumns, type APIParams, type Client } from '@/api/services/client'
 
 import dayjs from 'dayjs';
 
 const props = defineProps<{
-  handleMouseOver: (event: MouseEvent,id: string) => void;
+  handleMouseOver: (event: MouseEvent, id: string) => void;
   handleMouseLeave: () => void;
-  queryData: (params: APIParams) => Promise<void>;
+  queryData: (params: any) => Promise<void>;
   clientStore: any;
+  clientColumns: any;
 }>()
 
 const {
@@ -77,22 +77,22 @@ const handleTableChange: TableProps['onChange'] = (
 </script>
 
 <template>
-  <a-table :scroll="{ x: 1200, y: 500 }" :columns="clientColumns" :row-key="(record: Client) => record.id"
+  <a-table :scroll="{ x: 1200, y: 500 }" :columns="clientColumns" :row-key="(record: any) => record.id"
     :data-source="clientStore.readState.items" :pagination="pagination" :loading="loading" @change="handleTableChange">
 
     <template #bodyCell="{ column, text, index, record }">
-      <div @mouseover="event=>handleMouseOver(event,record.id)" @mouseleave="handleMouseLeave">
+      <div @mouseover="event => handleMouseOver(event, record.id)" @mouseleave="handleMouseLeave">
         <template v-if="column.dataIndex === 'index'">{{ index + 1 }}
         </template>
         <template v-if="column.dataIndex === 'createdAt'">
-            {{ dayjs(text).format('YYYY-MM-DD HH:mm:ss') }}
+          {{ dayjs(text).format('YYYY-MM-DD HH:mm:ss') }}
         </template>
         <template v-else-if="column.dataIndex === 'operation'">
           <div class="editable-row-operations">
             <slot name="operations">
             </slot>
           </div>
-        </template> <!-- 操作阶段 end -->
+        </template>
         <template v-else>
           {{ text }}
         </template>

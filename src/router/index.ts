@@ -5,24 +5,74 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
+      // name: 'party',
       components: {
         default: () => import('@/components/layoutComponents/HearderBar.vue'),
-        SiderBar: () => import('@/components/layoutComponents/SiderBar.vue'),
-        MainContainer: () => import('@/components/layoutComponents/Dashboard.vue')
+        // SiderBar: () => import('@/components/layoutComponents/SiderBar.vue'),
+        MainContainer: () => import('@/components/MainHome.vue')
       },
       // props:true,
       meta: { requiredLogin: true }
     },
     {
-      path: '/client',
-      name: 'client',
+      path: '/party/:partyId/',
+      // name: 'party-home',
       components: {
         default: () => import('@/components/layoutComponents/HearderBar.vue'),
         SiderBar: () => import('@/components/layoutComponents/SiderBar.vue'),
-        MainContainer: () => import('@/components/BusinessDepartment/Home.vue')
+        MainContainer: () => import('@/components/layoutComponents/DashBoardView.vue')
       },
-      // props:true,
+      props: {
+        default: true,
+        SiderBar: true,
+        MainContainer: true // 将 `partyId` 作为 `props` 传递给 `MainContainer` 组件
+      },
+      meta: { requiredLogin: true }
+    },
+
+    {
+      path: '/party/:partyId/client',
+      // name: 'client',
+      components: {
+        default: () => import('@/components/layoutComponents/HearderBar.vue'),
+        SiderBar: () => import('@/components/layoutComponents/SiderBar.vue'),
+        MainContainer: () => import('@/components/DepartmentBusiness/BusinessDepartmentHome.vue')
+      },
+      props: {
+        default: true,
+        SiderBar: true,
+        MainContainer: true // 将 `partyId` 作为 `props` 传递给 `MainContainer` 组件
+      },
+      meta: { requiredLogin: true }
+    },
+    {
+      path: '/party/:partyId/contract',
+      // name: 'contract',
+      components: {
+        default: () => import('@/components/layoutComponents/HearderBar.vue'),
+        SiderBar: () => import('@/components/layoutComponents/SiderBar.vue'),
+        MainContainer: () => import('@/components/DepartmentFinance/ContractPayHome.vue')
+      },
+      props: {
+        default: true,
+        SiderBar: true,
+        MainContainer: true // 将 `partyId` 作为 `props` 传递给 `MainContainer` 组件
+      },
+      meta: { requiredLogin: true }
+    },
+    {
+      path: '/party/:partyId/unity',
+      // name: 'unity',
+      components: {
+        default: () => import('@/components/layoutComponents/HearderBar.vue'),
+        SiderBar: () => import('@/components/layoutComponents/SiderBar.vue'),
+        MainContainer: () => import('@/components/DepartmentEngineering/UnityHome.vue')
+      },
+      props: {
+        default: true,
+        SiderBar: true,
+        MainContainer: true // 将 `partyId` 作为 `props` 传递给 `MainContainer` 组件
+      },
       meta: { requiredLogin: true }
     }
     // {

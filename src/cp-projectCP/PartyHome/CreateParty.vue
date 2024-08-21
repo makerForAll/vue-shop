@@ -1,0 +1,55 @@
+<template>
+    <div v-if="partyStore.data.tabsKey == 0">
+        <DrawerSlotView :action="'录入'" :entityType="'甲方信息'" v-model="partyStore.data.CItem" :fields="clientFields"
+            :rules="rules" @handleSubmit="handleSubmit" @fieldChange="fieldChange" @showDrawer="showDrawer">
+        </DrawerSlotView>
+    </div>
+</template>
+
+<script setup lang="ts">
+import DrawerSlotView from '@/cp-v1/cp-GCP/Drawer/DrawerSlot4.vue'
+import { useClientStore } from '@/stores/client';
+import type { Rule } from 'ant-design-vue/es/form';
+import type { Field } from '@/cp-v1/cp-GCP/Drawer/DrawerSlot4.vue';
+import type { CClientVO } from '@/services/vo/client';
+import { usePartyStore } from '@/stores/party';
+
+// --------------------------  表单配置 ------------------------------------------------------------------------------
+
+const clientFields: Field[] = [
+    { name: 'name', label: '乙方', component: 'a-input', props: { placeholder: '请输入甲方-名称' } },
+    { name: 'url', label: '链接', component: 'a-input', props: { placeholder: '请输入备注信息' } },
+    { name: 'marks', label: '备注', component: 'a-input', props: { placeholder: '请输入备注信息' } },
+];
+
+const rules: Record<string, Rule[]> = {
+    name: [{ required: true, message: '请输入乙方-名称', trigger: 'change' }],
+    url: [{ required: true, message: '链接', trigger: 'change' }],
+    marks: [{ required: false, message: '请输入备注信息' }],
+};
+
+// --------------------------  表单配置 ------------------------------------------------------------------------------
+
+// -------------------------------------  pinia层 数据交互 -------------------------------------------------------------------
+const partyStore = usePartyStore();
+
+const handleSubmit = async (form: CClientVO) => {
+    console.log("form:-----------", form);
+    await partyStore.create(form);
+
+}
+
+const showDrawer = async () => { // 重置form
+    // await clientStore.getInit();
+}
+
+const fieldChange = async (form: any) => {
+    partyStore.data.CItem = form;
+}
+
+
+// -------------------------------------  pinia层 数据交互 -------------------------------------------------------------------
+</script>
+
+
+<style scoped></style>

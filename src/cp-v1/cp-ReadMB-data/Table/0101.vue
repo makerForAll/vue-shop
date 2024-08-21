@@ -1,4 +1,3 @@
-
 <template>
   <div>
     <slot name="headerHandle">
@@ -6,14 +5,14 @@
   </div>
   <hr>
   <a-table :scroll="{ x: 1200, y: 500 }" :columns="clientColumns" :row-key="(record: any) => record.id"
-    :data-source="clientStore.clientData.items" :pagination="pagination" :loading="loading" @change="handleTableChange">
+    :data-source="clientStore.data.RItems" :pagination="pagination" :loading="loading" @change="handleTableChange">
 
     <template #bodyCell="{ column, text, index, record }">
-      <div @mouseover="event=>handleMouseOver(event,record.id)" @mouseleave="handleMouseLeave">
+      <div @mouseover="event => handleMouseOver(event, record.id)" @mouseleave="handleMouseLeave">
         <template v-if="column.dataIndex === 'index'">{{ index + 1 }}
         </template>
         <template v-if="column.dataIndex === 'createdAt'">
-            {{ dayjs(text).format('YYYY-MM-DD HH:mm:ss') }}
+          {{ dayjs(text).format('YYYY-MM-DD HH:mm:ss') }}
         </template>
         <template v-else-if="column.dataIndex === 'operation'">
           <div class="editable-row-operations">
@@ -51,22 +50,22 @@ const clientColumns = [
     sorter: true,
     width: '10%',
     fixed: 'left'
-  },{
+  }, {
     title: '联系方式',
     dataIndex: 'phonenumber',
     width: '10%',
-  },{
+  }, {
     title: '紧急联系人',
     dataIndex: 'emergencycontact',
     width: '12%',
-  },{
+  }, {
     title: '紧急联系人电话',
     dataIndex: 'emergencycontactphone',
     width: '15%',
-  },{
+  }, {
     title: '注册时间',
     dataIndex: 'createdAt',
-    width:'25%',
+    width: '25%',
     // customRender: ({ text }: { text: string }) => formatDate(new Date(text)) // 本地化显示
   },
   {
@@ -82,20 +81,20 @@ const clientColumns = [
   },
 ];
 
-onMounted(()=>{
+onMounted(() => {
   // console.log("apiClient:",apiClient.));
   // console.log("test");
-  
+
 })
 
 
 import dayjs from 'dayjs';
 
 // const props = defineProps<{
-  // handleMouseOver: (event: MouseEvent,id: string) => void;
-  // handleMouseLeave: () => void;
-  // queryData: (params: APIParams) => Promise<void>;
-  // clientStore: any;
+// handleMouseOver: (event: MouseEvent,id: string) => void;
+// handleMouseLeave: () => void;
+// queryData: (params: APIParams) => Promise<void>;
+// clientStore: any;
 // }>()
 
 // ---------------------------------------------------------------
@@ -103,7 +102,7 @@ import { useClientStore } from '@/stores/client';
 
 const clientStore = useClientStore();
 
-const handleMouseOver = async (event:MouseEvent,id:string) =>{
+const handleMouseOver = async (event: MouseEvent, id: string) => {
   console.log('Hovered over row with ID:', id);
   // 需要优化
   // clientStore.updateState.selectID = id;
@@ -115,10 +114,10 @@ const handleMouseLeave = () => {
   console.log('Mouse left the row');
 };
 
-const queryData = async (params: any):Promise<void> => {
+const queryData = async (params: any): Promise<void> => {
   // 需要优化
   // await clientStore.read(params);
-  
+
 };
 
 
@@ -131,7 +130,7 @@ const {
   current,
   pageSize,
 } = usePagination(queryData, {
-  onSuccess(data, params) {
+  onSuccess(_data, _params) {
   },
   pagination: {
     currentKey: 'current',
@@ -140,7 +139,7 @@ const {
 });
 
 const pagination = computed(() => ({
-  total: clientStore.clientData.items.length,
+  total: clientStore.data.RItems.length,
   current: current.value,
   pageSize: pageSize.value,
 }));
@@ -160,4 +159,3 @@ const handleTableChange: TableProps['onChange'] = (
 };
 
 </script>
-

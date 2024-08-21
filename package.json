@@ -6,20 +6,29 @@
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
+    "ossrm": "ossutil rm oss://start-nest-e4sb-bucket/ -r -f",
+    "osscp": "ossutil cp -r /Users/webde/Desktop/vue-shop/dist/ oss://start-nest-e4sb-bucket/",
+    "oss-d": "npm run ossrm && npm run osscp",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write src/",
-    "sta": "swagger-typescript-api -p http://localhost:3000/api-docs-json -o ./src/generated --axios --modular --extract-request-params --extract-request-body --extract-response-body"
+    "sta": "swagger-typescript-api -p http://localhost:9000/api-docs-json -o ./src/generated --axios --modular --extract-request-params --extract-request-body --extract-response-body",
+    "dto": "pnpm add dto-data@latest"
   },
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",
     "ant-design-vue": "4.x",
     "axios": "^1.7.3",
     "axios-retry": "^4.5.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
     "dayjs": "^1.11.12",
+    "dto-data": "^1.0.14",
+    "lodash": "^4.17.21",
     "pinia": "^2.1.7",
+    "reflect-metadata": "^0.2.2",
     "vue": "^3.4.29",
     "vue-print-next": "^1.0.6",
     "vue-request": "^2.0.4",
@@ -28,6 +37,7 @@
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.8.0",
     "@tsconfig/node20": "^20.1.4",
+    "@types/lodash": "^4.17.7",
     "@types/node": "^20.14.5",
     "@vitejs/plugin-vue": "^5.0.5",
     "@vue/eslint-config-prettier": "^9.0.0",
