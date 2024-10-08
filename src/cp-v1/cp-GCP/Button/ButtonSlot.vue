@@ -4,7 +4,7 @@
       {{ props.info }}
       <a-input v-model:value="password" placeholder="Password" />
     </template>
-    <a-button :style="props.buttonStyle" type="link">{{ props.buttonName }}</a-button>
+    <a-button :style="props.buttonStyle" :type="props.buttonType">{{ props.buttonName }}</a-button>
   </a-popconfirm>
 </template>
 
@@ -19,6 +19,7 @@ const props = defineProps<{
   Confirm: (password: string) => void;
   buttonName: string,
   buttonStyle?: object,
+  buttonType?: string,
   info: string,
 }>()
 

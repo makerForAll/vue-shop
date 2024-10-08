@@ -20,19 +20,21 @@
  * ---------------------------------------------------------------
  */
 import type {
-  ClientControllerCreateClientByPartyData,
-  ClientControllerCreateData,
+  ClientControllerCreateObjByFieldData,
   ClientControllerDeleteData,
   ClientControllerFindAllData,
   ClientControllerFindAllParams,
-  ClientControllerFindClientsData,
-  ClientControllerFindClientsParams,
+  ClientControllerFindObjsByFieldData,
+  ClientControllerFindObjsByFieldParams,
   ClientControllerFindOneData,
   ClientControllerUpdateData,
   CreateClientDTO,
   CreatePartyDTO,
+  CreatePartySoftWareDTO,
   CreatePaymentDetailItemDTO,
+  CreatePaymentPlanSplitDTO,
   CreatePlanDTO,
+  CreateSoftWareDTO,
   CreateUnityDTO,
   PartyControllerCreateData,
   PartyControllerDeleteData,
@@ -40,6 +42,13 @@ import type {
   PartyControllerFindAllParams,
   PartyControllerFindOneData,
   PartyControllerUpdateData,
+  PartySoftwareControllerCreateData,
+  PartySoftwareControllerDeleteData,
+  PartySoftwareControllerFindAllData,
+  PartySoftwareControllerFindAllParams,
+  PartySoftwareControllerFindOneData,
+  PartySoftwareControllerFindOneForRelObjData,
+  PartySoftwareControllerUpdateData,
   PaymentdetailitemControllerCreateData,
   PaymentdetailitemControllerDeleteData,
   PaymentdetailitemControllerFindAllData,
@@ -48,6 +57,12 @@ import type {
   PaymentdetailitemControllerFindByClientIdParams,
   PaymentdetailitemControllerFindOneData,
   PaymentdetailitemControllerUpdateData,
+  PaymentplansplitControllerCreateData,
+  PaymentplansplitControllerDeleteData,
+  PaymentplansplitControllerFindAllData,
+  PaymentplansplitControllerFindAllParams,
+  PaymentplansplitControllerFindOneData,
+  PaymentplansplitControllerUpdateData,
   PlanControllerCreatePlanByClientIdData,
   PlanControllerDeleteData,
   PlanControllerFindAllData,
@@ -55,23 +70,417 @@ import type {
   PlanControllerFindOneData,
   PlanControllerFindPlanByClientIdData,
   PlanControllerFindPlanByClientIdParams,
+  PlanControllerFindPlanByPartysoftwareIdData,
+  PlanControllerFindPlanByPartysoftwareIdParams,
   PlanControllerGetInitData,
   PlanControllerUpdateData,
+  SoftwareControllerCreateData,
+  SoftwareControllerDeleteData,
+  SoftwareControllerFindAllData,
+  SoftwareControllerFindAllParams,
+  SoftwareControllerFindOneData,
+  SoftwareControllerGetInitData,
+  SoftwareControllerUpdateData,
   UnityControllerCreateData,
+  UnityControllerCreateObjByFieldData,
   UnityControllerDeleteData,
   UnityControllerFindAllData,
   UnityControllerFindAllParams,
+  UnityControllerFindObjsByFieldIdData,
+  UnityControllerFindObjsByFieldIdParams,
   UnityControllerFindOneData,
+  UnityControllerGetInitData,
   UnityControllerUpdateData,
   UpdateClientDTO,
   UpdatePartyDTO,
+  UpdatePartySoftWareDTO,
   UpdatePaymentDetailItemDTO,
+  UpdatePaymentPlanSplitDTO,
   UpdatePlanDTO,
+  UpdateSoftWareDTO,
   UpdateUnityDTO
 } from './data-contracts'
 import { ContentType, HttpClient, type RequestParams } from './http-client'
 
 export class Api<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
+  /**
+   * No description
+   *
+   * @tags party
+   * @name PartyControllerCreate
+   * @summary 创建party
+   * @request POST:/api/v1/party
+   */
+  partyControllerCreate = (data: CreatePartyDTO, params: RequestParams = {}) =>
+    this.request<PartyControllerCreateData, any>({
+      path: `/api/v1/party`,
+      method: 'POST',
+      body: data,
+      type: ContentType.Json,
+      ...params
+    })
+  /**
+   * No description
+   *
+   * @tags party
+   * @name PartyControllerFindAll
+   * @summary 获取所有Party
+   * @request GET:/api/v1/party
+   */
+  partyControllerFindAll = (query: PartyControllerFindAllParams, params: RequestParams = {}) =>
+    this.request<PartyControllerFindAllData, any>({
+      path: `/api/v1/party`,
+      method: 'GET',
+      query: query,
+      ...params
+    })
+  /**
+   * No description
+   *
+   * @tags party
+   * @name PartyControllerFindOne
+   * @summary 根据ID获取party
+   * @request GET:/api/v1/party/{partyId}
+   */
+  partyControllerFindOne = (partyId: string, params: RequestParams = {}) =>
+    this.request<PartyControllerFindOneData, any>({
+      path: `/api/v1/party/${partyId}`,
+      method: 'GET',
+      ...params
+    })
+  /**
+   * No description
+   *
+   * @tags party
+   * @name PartyControllerUpdate
+   * @summary 更新party
+   * @request PATCH:/api/v1/party/{partyId}
+   */
+  partyControllerUpdate = (partyId: string, data: UpdatePartyDTO, params: RequestParams = {}) =>
+    this.request<PartyControllerUpdateData, any>({
+      path: `/api/v1/party/${partyId}`,
+      method: 'PATCH',
+      body: data,
+      type: ContentType.Json,
+      ...params
+    })
+  /**
+   * No description
+   *
+   * @tags party
+   * @name PartyControllerDelete
+   * @summary 删除party
+   * @request DELETE:/api/v1/party/{partyId}
+   */
+  partyControllerDelete = (partyId: string, params: RequestParams = {}) =>
+    this.request<PartyControllerDeleteData, any>({
+      path: `/api/v1/party/${partyId}`,
+      method: 'DELETE',
+      ...params
+    })
+  /**
+   * No description
+   *
+   * @tags software
+   * @name SoftwareControllerGetInit
+   * @summary plan数据初始化
+   * @request GET:/api/v1/software/init
+   */
+  softwareControllerGetInit = (params: RequestParams = {}) =>
+    this.request<SoftwareControllerGetInitData, any>({
+      path: `/api/v1/software/init`,
+      method: 'GET',
+      ...params
+    })
+  /**
+   * No description
+   *
+   * @tags software
+   * @name SoftwareControllerCreate
+   * @summary 创建software
+   * @request POST:/api/v1/software
+   */
+  softwareControllerCreate = (data: CreateSoftWareDTO, params: RequestParams = {}) =>
+    this.request<SoftwareControllerCreateData, any>({
+      path: `/api/v1/software`,
+      method: 'POST',
+      body: data,
+      type: ContentType.Json,
+      ...params
+    })
+  /**
+   * No description
+   *
+   * @tags software
+   * @name SoftwareControllerFindAll
+   * @summary 获取所有software
+   * @request GET:/api/v1/software
+   */
+  softwareControllerFindAll = (
+    query: SoftwareControllerFindAllParams,
+    params: RequestParams = {}
+  ) =>
+    this.request<SoftwareControllerFindAllData, any>({
+      path: `/api/v1/software`,
+      method: 'GET',
+      query: query,
+      ...params
+    })
+  /**
+   * No description
+   *
+   * @tags software
+   * @name SoftwareControllerFindOne
+   * @summary 根据ID获取software
+   * @request GET:/api/v1/software/{softwareId}
+   */
+  softwareControllerFindOne = (softwareId: string, params: RequestParams = {}) =>
+    this.request<SoftwareControllerFindOneData, any>({
+      path: `/api/v1/software/${softwareId}`,
+      method: 'GET',
+      ...params
+    })
+  /**
+   * No description
+   *
+   * @tags software
+   * @name SoftwareControllerUpdate
+   * @summary 更新software
+   * @request PATCH:/api/v1/software/{softwareId}
+   */
+  softwareControllerUpdate = (
+    softwareId: string,
+    data: UpdateSoftWareDTO,
+    params: RequestParams = {}
+  ) =>
+    this.request<SoftwareControllerUpdateData, any>({
+      path: `/api/v1/software/${softwareId}`,
+      method: 'PATCH',
+      body: data,
+      type: ContentType.Json,
+      ...params
+    })
+  /**
+   * No description
+   *
+   * @tags software
+   * @name SoftwareControllerDelete
+   * @summary 删除software
+   * @request DELETE:/api/v1/software/{softwareId}
+   */
+  softwareControllerDelete = (softwareId: string, params: RequestParams = {}) =>
+    this.request<SoftwareControllerDeleteData, any>({
+      path: `/api/v1/software/${softwareId}`,
+      method: 'DELETE',
+      ...params
+    })
+  /**
+   * No description
+   *
+   * @tags party-software
+   * @name PartySoftwareControllerCreate
+   * @summary 创建 partysoftware
+   * @request POST:/api/v1/partysoftware
+   */
+  partySoftwareControllerCreate = (data: CreatePartySoftWareDTO, params: RequestParams = {}) =>
+    this.request<PartySoftwareControllerCreateData, any>({
+      path: `/api/v1/partysoftware`,
+      method: 'POST',
+      body: data,
+      type: ContentType.Json,
+      ...params
+    })
+  /**
+   * No description
+   *
+   * @tags party-software
+   * @name PartySoftwareControllerFindAll
+   * @summary 获取所有 partysoftware
+   * @request GET:/api/v1/partysoftware
+   */
+  partySoftwareControllerFindAll = (
+    query: PartySoftwareControllerFindAllParams,
+    params: RequestParams = {}
+  ) =>
+    this.request<PartySoftwareControllerFindAllData, any>({
+      path: `/api/v1/partysoftware`,
+      method: 'GET',
+      query: query,
+      ...params
+    })
+  /**
+   * No description
+   *
+   * @tags party-software
+   * @name PartySoftwareControllerFindOne
+   * @summary 根据ID获取 partysoftware的关联中带字符串ID
+   * @request GET:/api/v1/partysoftware/{partysoftwareId}
+   */
+  partySoftwareControllerFindOne = (partysoftwareId: string, params: RequestParams = {}) =>
+    this.request<PartySoftwareControllerFindOneData, any>({
+      path: `/api/v1/partysoftware/${partysoftwareId}`,
+      method: 'GET',
+      ...params
+    })
+  /**
+   * No description
+   *
+   * @tags party-software
+   * @name PartySoftwareControllerUpdate
+   * @summary 更新 partysoftware
+   * @request PATCH:/api/v1/partysoftware/{partysoftwareId}
+   */
+  partySoftwareControllerUpdate = (
+    partysoftwareId: string,
+    data: UpdatePartySoftWareDTO,
+    params: RequestParams = {}
+  ) =>
+    this.request<PartySoftwareControllerUpdateData, any>({
+      path: `/api/v1/partysoftware/${partysoftwareId}`,
+      method: 'PATCH',
+      body: data,
+      type: ContentType.Json,
+      ...params
+    })
+  /**
+   * No description
+   *
+   * @tags party-software
+   * @name PartySoftwareControllerDelete
+   * @summary 删除 partysoftware
+   * @request DELETE:/api/v1/partysoftware/{partysoftwareId}
+   */
+  partySoftwareControllerDelete = (partysoftwareId: string, params: RequestParams = {}) =>
+    this.request<PartySoftwareControllerDeleteData, any>({
+      path: `/api/v1/partysoftware/${partysoftwareId}`,
+      method: 'DELETE',
+      ...params
+    })
+  /**
+   * No description
+   *
+   * @tags party-software
+   * @name PartySoftwareControllerFindOneForRelObj
+   * @summary 根据ID获取 partysoftware正常打印关联对象
+   * @request GET:/api/v1/partysoftware/{partysoftwareId}/forrelobj
+   */
+  partySoftwareControllerFindOneForRelObj = (partysoftwareId: string, params: RequestParams = {}) =>
+    this.request<PartySoftwareControllerFindOneForRelObjData, any>({
+      path: `/api/v1/partysoftware/${partysoftwareId}/forrelobj`,
+      method: 'GET',
+      ...params
+    })
+  /**
+   * No description
+   *
+   * @tags client
+   * @name ClientControllerFindAll
+   * @summary 获取所有client数据
+   * @request GET:/api/v1/client
+   */
+  clientControllerFindAll = (query: ClientControllerFindAllParams, params: RequestParams = {}) =>
+    this.request<ClientControllerFindAllData, any>({
+      path: `/api/v1/client`,
+      method: 'GET',
+      query: query,
+      ...params
+    })
+  /**
+   * No description
+   *
+   * @tags client
+   * @name ClientControllerFindOne
+   * @summary 根据ID获取客户
+   * @request GET:/api/v1/client/{clientId}
+   */
+  clientControllerFindOne = (clientId: string, params: RequestParams = {}) =>
+    this.request<ClientControllerFindOneData, any>({
+      path: `/api/v1/client/${clientId}`,
+      method: 'GET',
+      ...params
+    })
+  /**
+   * No description
+   *
+   * @tags client
+   * @name ClientControllerUpdate
+   * @summary 更新客户
+   * @request PATCH:/api/v1/client/{clientId}
+   */
+  clientControllerUpdate = (clientId: string, data: UpdateClientDTO, params: RequestParams = {}) =>
+    this.request<ClientControllerUpdateData, any>({
+      path: `/api/v1/client/${clientId}`,
+      method: 'PATCH',
+      body: data,
+      type: ContentType.Json,
+      ...params
+    })
+  /**
+   * No description
+   *
+   * @tags client
+   * @name ClientControllerDelete
+   * @summary 删除客户
+   * @request DELETE:/api/v1/client/{clientId}
+   */
+  clientControllerDelete = (clientId: string, params: RequestParams = {}) =>
+    this.request<ClientControllerDeleteData, any>({
+      path: `/api/v1/client/${clientId}`,
+      method: 'DELETE',
+      ...params
+    })
+  /**
+   * No description
+   *
+   * @tags client
+   * @name ClientControllerFindObjsByField
+   * @summary 通过PartySoftwareId 获取相关的Clients
+   * @request GET:/api/v1/partysoftware/{partysoftwareId}/client
+   */
+  clientControllerFindObjsByField = (
+    { partysoftwareId, ...query }: ClientControllerFindObjsByFieldParams,
+    params: RequestParams = {}
+  ) =>
+    this.request<ClientControllerFindObjsByFieldData, any>({
+      path: `/api/v1/partysoftware/${partysoftwareId}/client`,
+      method: 'GET',
+      query: query,
+      ...params
+    })
+  /**
+   * No description
+   *
+   * @tags client
+   * @name ClientControllerCreateObjByField
+   * @summary 通过PartyId 创建关联client
+   * @request POST:/api/v1/partysoftware/{partysoftwareId}/client
+   */
+  clientControllerCreateObjByField = (
+    partysoftwareId: string,
+    data: CreateClientDTO,
+    params: RequestParams = {}
+  ) =>
+    this.request<ClientControllerCreateObjByFieldData, any>({
+      path: `/api/v1/partysoftware/${partysoftwareId}/client`,
+      method: 'POST',
+      body: data,
+      type: ContentType.Json,
+      ...params
+    })
+  /**
+   * No description
+   *
+   * @tags unity
+   * @name UnityControllerGetInit
+   * @summary unity数据初始化
+   * @request GET:/api/v1/unity/init
+   */
+  unityControllerGetInit = (params: RequestParams = {}) =>
+    this.request<UnityControllerGetInitData, any>({
+      path: `/api/v1/unity/init`,
+      method: 'GET',
+      ...params
+    })
   /**
    * No description
    *
@@ -145,6 +554,44 @@ export class Api<SecurityDataType = unknown> extends HttpClient<SecurityDataType
     this.request<UnityControllerDeleteData, any>({
       path: `/api/v1/unity/${unityId}`,
       method: 'DELETE',
+      ...params
+    })
+  /**
+   * No description
+   *
+   * @tags unity
+   * @name UnityControllerFindObjsByFieldId
+   * @summary 通过PartySoftwareId 获取相关的Clients
+   * @request GET:/api/v1/partysoftware/{fieldId}/unity
+   */
+  unityControllerFindObjsByFieldId = (
+    { fieldId, ...query }: UnityControllerFindObjsByFieldIdParams,
+    params: RequestParams = {}
+  ) =>
+    this.request<UnityControllerFindObjsByFieldIdData, any>({
+      path: `/api/v1/partysoftware/${fieldId}/unity`,
+      method: 'GET',
+      query: query,
+      ...params
+    })
+  /**
+   * No description
+   *
+   * @tags unity
+   * @name UnityControllerCreateObjByField
+   * @summary 通过Id 创建关联client
+   * @request POST:/api/v1/partysoftware/{fieldId}/unity
+   */
+  unityControllerCreateObjByField = (
+    fieldId: string,
+    data: CreateUnityDTO,
+    params: RequestParams = {}
+  ) =>
+    this.request<UnityControllerCreateObjByFieldData, any>({
+      path: `/api/v1/partysoftware/${fieldId}/unity`,
+      method: 'POST',
+      body: data,
+      type: ContentType.Json,
       ...params
     })
   /**
@@ -261,189 +708,19 @@ export class Api<SecurityDataType = unknown> extends HttpClient<SecurityDataType
   /**
    * No description
    *
-   * @tags client
-   * @name ClientControllerCreate
-   * @summary 创建客户
-   * @request POST:/api/v1/client
+   * @tags plan
+   * @name PlanControllerFindPlanByPartysoftwareId
+   * @summary 获取指定 partysoftwareId 中的所有Plan
+   * @request GET:/api/v1/partysoftware/{partysoftwareId}/plan
    */
-  clientControllerCreate = (data: CreateClientDTO, params: RequestParams = {}) =>
-    this.request<ClientControllerCreateData, any>({
-      path: `/api/v1/client`,
-      method: 'POST',
-      body: data,
-      type: ContentType.Json,
-      ...params
-    })
-  /**
-   * No description
-   *
-   * @tags client
-   * @name ClientControllerFindAll
-   * @summary 获取所有client数据
-   * @request GET:/api/v1/client
-   */
-  clientControllerFindAll = (query: ClientControllerFindAllParams, params: RequestParams = {}) =>
-    this.request<ClientControllerFindAllData, any>({
-      path: `/api/v1/client`,
-      method: 'GET',
-      query: query,
-      ...params
-    })
-  /**
-   * No description
-   *
-   * @tags client
-   * @name ClientControllerFindOne
-   * @summary 根据ID获取客户
-   * @request GET:/api/v1/client/{clientId}
-   */
-  clientControllerFindOne = (clientId: string, params: RequestParams = {}) =>
-    this.request<ClientControllerFindOneData, any>({
-      path: `/api/v1/client/${clientId}`,
-      method: 'GET',
-      ...params
-    })
-  /**
-   * No description
-   *
-   * @tags client
-   * @name ClientControllerUpdate
-   * @summary 更新客户
-   * @request PATCH:/api/v1/client/{clientId}
-   */
-  clientControllerUpdate = (clientId: string, data: UpdateClientDTO, params: RequestParams = {}) =>
-    this.request<ClientControllerUpdateData, any>({
-      path: `/api/v1/client/${clientId}`,
-      method: 'PATCH',
-      body: data,
-      type: ContentType.Json,
-      ...params
-    })
-  /**
-   * No description
-   *
-   * @tags client
-   * @name ClientControllerDelete
-   * @summary 删除客户
-   * @request DELETE:/api/v1/client/{clientId}
-   */
-  clientControllerDelete = (clientId: string, params: RequestParams = {}) =>
-    this.request<ClientControllerDeleteData, any>({
-      path: `/api/v1/client/${clientId}`,
-      method: 'DELETE',
-      ...params
-    })
-  /**
-   * No description
-   *
-   * @tags client
-   * @name ClientControllerFindClients
-   * @summary 通过PartyId 获取相关的Clients
-   * @request GET:/api/v1/party/{partyId}/client
-   */
-  clientControllerFindClients = (
-    { partyId, ...query }: ClientControllerFindClientsParams,
+  planControllerFindPlanByPartysoftwareId = (
+    { partysoftwareId, ...query }: PlanControllerFindPlanByPartysoftwareIdParams,
     params: RequestParams = {}
   ) =>
-    this.request<ClientControllerFindClientsData, any>({
-      path: `/api/v1/party/${partyId}/client`,
+    this.request<PlanControllerFindPlanByPartysoftwareIdData, any>({
+      path: `/api/v1/partysoftware/${partysoftwareId}/plan`,
       method: 'GET',
       query: query,
-      ...params
-    })
-  /**
-   * No description
-   *
-   * @tags client
-   * @name ClientControllerCreateClientByParty
-   * @summary 通过PartyId 创建关联client
-   * @request POST:/api/v1/party/{partyId}/client
-   */
-  clientControllerCreateClientByParty = (
-    partyId: string,
-    data: CreateClientDTO,
-    params: RequestParams = {}
-  ) =>
-    this.request<ClientControllerCreateClientByPartyData, any>({
-      path: `/api/v1/party/${partyId}/client`,
-      method: 'POST',
-      body: data,
-      type: ContentType.Json,
-      ...params
-    })
-  /**
-   * No description
-   *
-   * @tags party
-   * @name PartyControllerCreate
-   * @summary 创建party
-   * @request POST:/api/v1/party
-   */
-  partyControllerCreate = (data: CreatePartyDTO, params: RequestParams = {}) =>
-    this.request<PartyControllerCreateData, any>({
-      path: `/api/v1/party`,
-      method: 'POST',
-      body: data,
-      type: ContentType.Json,
-      ...params
-    })
-  /**
-   * No description
-   *
-   * @tags party
-   * @name PartyControllerFindAll
-   * @summary 获取所有Plan
-   * @request GET:/api/v1/party
-   */
-  partyControllerFindAll = (query: PartyControllerFindAllParams, params: RequestParams = {}) =>
-    this.request<PartyControllerFindAllData, any>({
-      path: `/api/v1/party`,
-      method: 'GET',
-      query: query,
-      ...params
-    })
-  /**
-   * No description
-   *
-   * @tags party
-   * @name PartyControllerFindOne
-   * @summary 根据ID获取part
-   * @request GET:/api/v1/party/{partyId}
-   */
-  partyControllerFindOne = (partyId: string, params: RequestParams = {}) =>
-    this.request<PartyControllerFindOneData, any>({
-      path: `/api/v1/party/${partyId}`,
-      method: 'GET',
-      ...params
-    })
-  /**
-   * No description
-   *
-   * @tags party
-   * @name PartyControllerUpdate
-   * @summary 更新party
-   * @request PATCH:/api/v1/party/{partyId}
-   */
-  partyControllerUpdate = (partyId: string, data: UpdatePartyDTO, params: RequestParams = {}) =>
-    this.request<PartyControllerUpdateData, any>({
-      path: `/api/v1/party/${partyId}`,
-      method: 'PATCH',
-      body: data,
-      type: ContentType.Json,
-      ...params
-    })
-  /**
-   * No description
-   *
-   * @tags party
-   * @name PartyControllerDelete
-   * @summary 删除party
-   * @request DELETE:/api/v1/party/{partyId}
-   */
-  partyControllerDelete = (partyId: string, params: RequestParams = {}) =>
-    this.request<PartyControllerDeleteData, any>({
-      path: `/api/v1/party/${partyId}`,
-      method: 'DELETE',
       ...params
     })
   /**
@@ -548,6 +825,93 @@ export class Api<SecurityDataType = unknown> extends HttpClient<SecurityDataType
       path: `/api/v1/plan/${planId}/paymentdetailitem`,
       method: 'GET',
       query: query,
+      ...params
+    })
+  /**
+   * No description
+   *
+   * @tags paymentplansplit
+   * @name PaymentplansplitControllerFindAll
+   * @summary 获取所有paymentplansplit
+   * @request GET:/api/v1/paymentplansplit
+   */
+  paymentplansplitControllerFindAll = (
+    query: PaymentplansplitControllerFindAllParams,
+    params: RequestParams = {}
+  ) =>
+    this.request<PaymentplansplitControllerFindAllData, any>({
+      path: `/api/v1/paymentplansplit`,
+      method: 'GET',
+      query: query,
+      ...params
+    })
+  /**
+   * No description
+   *
+   * @tags paymentplansplit
+   * @name PaymentplansplitControllerFindOne
+   * @summary 获取单个paymentplansplit
+   * @request GET:/api/v1/paymentplansplit/{paymentplansplitId}
+   */
+  paymentplansplitControllerFindOne = (paymentplansplitId: string, params: RequestParams = {}) =>
+    this.request<PaymentplansplitControllerFindOneData, any>({
+      path: `/api/v1/paymentplansplit/${paymentplansplitId}`,
+      method: 'GET',
+      ...params
+    })
+  /**
+   * No description
+   *
+   * @tags paymentplansplit
+   * @name PaymentplansplitControllerUpdate
+   * @summary 更新paymentplansplit
+   * @request PATCH:/api/v1/paymentplansplit/{paymentplansplitId}
+   */
+  paymentplansplitControllerUpdate = (
+    paymentplansplitId: string,
+    data: UpdatePaymentPlanSplitDTO,
+    params: RequestParams = {}
+  ) =>
+    this.request<PaymentplansplitControllerUpdateData, any>({
+      path: `/api/v1/paymentplansplit/${paymentplansplitId}`,
+      method: 'PATCH',
+      body: data,
+      type: ContentType.Json,
+      ...params
+    })
+  /**
+   * No description
+   *
+   * @tags paymentplansplit
+   * @name PaymentplansplitControllerDelete
+   * @summary 删除paymentplansplit
+   * @request DELETE:/api/v1/paymentplansplit/{paymentplansplitId}
+   */
+  paymentplansplitControllerDelete = (paymentplansplitId: string, params: RequestParams = {}) =>
+    this.request<PaymentplansplitControllerDeleteData, any>({
+      path: `/api/v1/paymentplansplit/${paymentplansplitId}`,
+      method: 'DELETE',
+      ...params
+    })
+  /**
+   * No description
+   *
+   * @tags paymentplansplit
+   * @name PaymentplansplitControllerCreate
+   * @summary 创建paymentplansplit
+   * @request POST:/api/v1/paymentdetailitem/{paymentdetailitemId}/paymentplansplit
+   */
+  paymentplansplitControllerCreate = (
+    planId: string,
+    paymentdetailitemId: string,
+    data: CreatePaymentPlanSplitDTO,
+    params: RequestParams = {}
+  ) =>
+    this.request<PaymentplansplitControllerCreateData, any>({
+      path: `/api/v1/paymentdetailitem/${paymentdetailitemId}/paymentplansplit`,
+      method: 'POST',
+      body: data,
+      type: ContentType.Json,
       ...params
     })
 }

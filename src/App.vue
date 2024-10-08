@@ -1,38 +1,40 @@
 <template>
-  <a-config-provider :locale="zhCN">
-    <a-layout style="min-height: 100vh">
+  <div>
+    <a-config-provider :locale="zhCN">
+      <a-layout style="min-height: 100vh">
 
-      <RouterView name="SiderBar" />
-      <!-- 侧边栏 -->
-      <a-layout>
+        <RouterView name="SiderBar" />
+        <!-- 侧边栏 -->
+        <a-layout>
 
-        <RouterView /> <!-- 默认 Header-->
-        <!-- 缩放控制按钮 -->
-        <div style="padding: 10px; text-align: center;">
-          缩放比率
-          {{ headerStore.scale.toFixed(2) }}
-          <a-button @click="headerStore.zoomIn">放大</a-button>
-          <a-button @click="headerStore.zoomOut">缩小</a-button>
-          <a-button @click="headerStore.resetZoom">重置</a-button>
-        </div>
-        <a-layout style="padding: 0 24px 24px">
-          <div :style="{
-            transform: `scale(${headerStore.getScale})`,
-            transformOrigin: 'top left',
-            width: `${100 / headerStore.getScale}%`,
-            height: `${100 / headerStore.getScale}%`,
-            background: '#fff',
-            margin: '0 auto',
-          }">
-            <!-- <a-layout style="padding: 0 24px 24px"> -->
-            <a-layout-content :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }">
-              <RouterView name="MainContainer" />
-            </a-layout-content>
+          <RouterView name="Header" /> <!-- 默认 Header-->
+          <!-- 缩放控制按钮 -->
+          <div style="padding: 10px; text-align: center;">
+            缩放比率
+            {{ headerStore.scale.toFixed(2) }}
+            <a-button @click="headerStore.zoomIn">放大</a-button>
+            <a-button @click="headerStore.zoomOut">缩小</a-button>
+            <a-button @click="headerStore.resetZoom">重置</a-button>
           </div>
+          <a-layout style="padding: 0 24px 24px">
+            <div :style="{
+              transform: `scale(${headerStore.getScale})`,
+              transformOrigin: 'top left',
+              width: `${100 / headerStore.getScale}%`,
+              height: `${100 / headerStore.getScale}%`,
+              background: '#fff',
+              margin: '0 auto',
+            }">
+              <!-- <a-layout style="padding: 0 24px 24px"> -->
+              <a-layout-content :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }">
+                <RouterView name="MainContainer" />
+              </a-layout-content>
+            </div>
+          </a-layout>
         </a-layout>
       </a-layout>
-    </a-layout>
-  </a-config-provider>
+    </a-config-provider>
+  </div>
 </template>
 
 <script setup lang="ts">

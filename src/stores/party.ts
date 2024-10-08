@@ -4,15 +4,16 @@ import { message } from 'ant-design-vue'
 // import dayjs from 'dayjs'
 
 // ------------------------------
-import type { ApiResults } from '@/services/vo/models-common'
+import type { ApiResults } from '@/0-manage-hub/services/common/models-common'
 //------------------------------------------
 
 import customApi from '@/custom/api/core/custom-http-client' // 导入自定义 API 实例
-import type { CPartyVO, RPartyVO, UPartyVO } from '@/services/vo/party'
-import partyService from '@/services/partyService'
+import type { CPartyVO, RPartyVO, UPartyVO } from '@/0-manage-hub/services/vo/party'
+import partyService from '@/0-manage-hub/services/partyService'
 
 export const usePartyStore = defineStore('party', {
   // 其他配置...
+  // persist: true, // 启用持久化
   state: () => {
     // 可以写一些逻辑
     return {
@@ -47,8 +48,9 @@ export const usePartyStore = defineStore('party', {
         // 完整的初始化对象，确保包含所有必需的字段
         const defaultValue: CPartyVO = {
           name: '',
-          clients: null,
-          url: ''
+          // clients: null,
+          url: '',
+          partySoftware: null
         }
         state.data.CItem = defaultValue
       }

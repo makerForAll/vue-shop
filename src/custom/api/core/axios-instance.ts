@@ -5,7 +5,8 @@ import axiosRetry from 'axios-retry'
 // import { message as wolail } from 'ant-design-vue';
 // frontend
 const axiosInstance: AxiosInstance = axios.create({
-  // baseURL: 'https://shop.yljt.info',
+  // baseURL: 'https://ecs.yljt.info',
+  // baseURL: 'http://api.yljt.info',
   baseURL: 'http://localhost:9000/',
   timeout: 20000,
   headers: {

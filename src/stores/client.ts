@@ -2,11 +2,11 @@ import { defineStore } from 'pinia'
 import { message } from 'ant-design-vue'
 import dayjs from 'dayjs'
 // ------------------------------
-import type { ApiResults } from '@/services/vo/models-common'
-import type { CClientVO, RClientVO, UClientVO } from '@/services/vo/client'
+import type { ApiResults } from '@/0-manage-hub/services/common/models-common'
+import type { CClientVO, RClientVO, UClientVO } from '@/2-biz-complex/services/vo/client'
 //------------------------------------------
 
-import clientService from '@/services/clientService'
+import clientService from '@/2-biz-complex/services/clientService'
 
 import customApi from '@/custom/api/core/custom-http-client' // 导入自定义 API 实例
 
@@ -33,6 +33,7 @@ import customApi from '@/custom/api/core/custom-http-client' // 导入自定义 
 
 export const useClientStore = defineStore('client', {
   // 其他配置...
+  // persist: true,
   state: () => {
     // 可以写一些逻辑
     return {
@@ -44,6 +45,7 @@ export const useClientStore = defineStore('client', {
         RItem: {} as RClientVO,
         RItems: [] as RClientVO[],
         total: 0,
+        // Aitem: {} as RClientVO,
         selectName: '',
         selectID: '', // 要更新的对象
         loading: false // store 的数据 (data)
@@ -62,29 +64,31 @@ export const useClientStore = defineStore('client', {
     },
     getKeyToState: (state) => {
       return (data: number) => (state.data.tabsKey = data)
-    },
-    getInit: (state) => {
-      return () => {
-        // 完整的初始化对象，确保包含所有必需的字段
-        const defaultValue: CClientVO = {
-          createdAt: dayjs(), // 假设 `createdAt` 是 `Dayjs` 类型
-          tags: 0,
-          name: '',
-          contact: '',
-          phonenumber: ''
-        }
-        state.data.CItem = defaultValue
-      }
     }
+    // getInit: (state) => {
+    //   return () => {
+    //     // 完整的初始化对象，确保包含所有必需的字段
+    //     const defaultValue: CClientVO = {
+    //       createdAt: dayjs(), // 假设 `createdAt` 是 `Dayjs` 类型
+    //       tags: 0,
+    //       name: '',
+    //       contact: '',
+    //       phonenumber: '',
+    //       partySoftware: undefined
+    //     }
+    //     state.data.CItem = defaultValue
+    //   }
+    // }
   },
   actions: {
     //actions 则是方法 (methods)
     // async calTotal(){
     //   this.createState.item.total = this.double;
     // },
-    async updateSelectID(id: string, name: string) {
+    async updateSelectID(id: string, name: string, obj: RClientVO) {
       this.data.selectID = id
       this.data.selectName = name
+      this.data.RItem = obj
     },
     async clearSelectID() {
       this.data.selectID = ''
@@ -107,21 +111,21 @@ export const useClientStore = defineStore('client', {
     //   // this.clientData.items = response?.results?.data;
     //   // this.createState.item = initClientForm;
     // },
-    async create(data: any) {
-      this.data.loading = true
-      const response = (await clientService.create(data)) as ApiResults<RClientVO>
-      // const response = (await customApi.clientControllerCreate(data)) as ApiResults<CClientVO>
-      console.log('response,', response)
+    // async create(data: any) {
+    //   this.data.loading = true
+    //   const response = (await clientService.create(data)) as ApiResults<RClientVO>
+    //   // const response = (await customApi.clientControllerCreate(data)) as ApiResults<CClientVO>
+    //   console.log('response,', response)
 
-      if (response) {
-        this.data.CItem = response.data[0]
-        // 更新本地 state 中的 party 数据 -------------------------------------------
-        this.data.RItems.unshift(response.data[0])
-        this.data.loading = false
-        message.success('创建客户信息成功')
-        // this.read()
-      }
-    },
+    //   if (response) {
+    //     this.data.CItem = response.data[0]
+    //     // 更新本地 state 中的 party 数据 -------------------------------------------
+    //     this.data.RItems.unshift(response.data[0])
+    //     this.data.loading = false
+    //     message.success('创建客户信息成功')
+    //     // this.read()
+    //   }
+    // },
 
     async read(
       params: any = {
@@ -188,8 +192,8 @@ export const useClientStore = defineStore('client', {
     },
 
     // ----------------------------------------------------------
-    async readClientsByPartyId(
-      partyId: string,
+    async readClientsByFieldId(
+      fieldId: string,
       params: any = {
         current: 1,
         pagesize: 10
@@ -198,11 +202,12 @@ export const useClientStore = defineStore('client', {
     ): Promise<RClientVO[]> {
       this.data.loading = true
       // 异步编程获取数据
-      const response = (await clientService.readClientsByPartyId(
-        partyId,
+      const response = (await clientService.readObjsByFieldId(
+        fieldId,
         params,
         filters
       )) as ApiResults<RClientVO>
+      // console.log('response-----------store pinia--', fieldId, response)
       if (response) {
         this.data.RItems = response.data as RClientVO[]
         this.data.total = response.total as number
@@ -211,10 +216,10 @@ export const useClientStore = defineStore('client', {
       }
       return response?.data
     },
-    async createClientByPartyId(partyId: string, data: any) {
+    async createClientByFieldId(fieldId: string, data: any) {
       this.data.loading = true
-      const response = (await clientService.createClientByPartyId(
-        partyId,
+      const response = (await clientService.createObjByFieldId(
+        fieldId,
         data
       )) as ApiResults<RClientVO>
       // const response = (await customApi.clientControllerCreate(data)) as ApiResults<CClientVO>

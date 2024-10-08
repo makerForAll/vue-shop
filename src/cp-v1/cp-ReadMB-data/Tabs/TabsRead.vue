@@ -20,7 +20,7 @@
 </template>
 <script lang="ts" setup>
 // import type { APIParams } from '@/api/services/plan';
-import type { APIParams } from '@/services/vo/models-common';
+import type { APIParams } from '@/0-manage-hub/services/common/models-common';
 import { onMounted, reactive, ref, watch } from 'vue';
 import { usePagination } from 'vue-request';
 
@@ -51,7 +51,7 @@ watch(
       activeKey.value = newValue[key].key;
       console.log("打印：", activeKey.value);
     }
-    console.log('internalForm watch--------------------------:', internalForm)
+    // console.log('internalForm watch--------------------------:', internalForm)
   },
   {
     deep: true,

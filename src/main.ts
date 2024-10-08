@@ -35,8 +35,9 @@ dayjs.tz.setDefault('Asia/Shanghai')
 const app = createApp(App)
 
 // ------------- begin
-app.use(pinia) // 状态管理
+
 app.use(Antd) // antd组件库
+app.use(pinia) // 状态管理
 app.use(router) // 路由管理
 app.use(printPlugin)
 

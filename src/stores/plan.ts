@@ -2,19 +2,26 @@
 import { defineStore } from 'pinia'
 import { message } from 'ant-design-vue'
 
-import type { ApiResponse, ApiResults } from '@/services/vo/models-common'
+import type { ApiResponse, ApiResults } from '@/0-manage-hub/services/common/models-common'
 
 import customApi from '@/custom/api/core/custom-http-client' // 导入自定义 API 实例
 // import type { CreatePlanDTO, ReadPlanDTO, UpdatePlanDTO } from '@/generated/data-contracts'
 
-import PlanService from '@/services/planService'
-import clientService from '@/services/clientService'
-import planService from '@/services/planService'
-import type { RPlanVO, CPlanVO, UPlanVO } from '@/services/vo/plan'
-import type { CPaymentDetailItemVO } from '@/services/vo/paymentdetailitem'
+import PlanService from '@/2-biz-complex/services/planService'
+// import clientService from '@/services/clientService'
+// import planService from '@/2-biz-complex/'
+import type { RPlanVO, CPlanVO, UPlanVO } from '@/2-biz-complex/services/vo/plan'
+import type {
+  CPaymentDetailItemVO,
+  RPaymentDetailItemVO
+} from '@/2-biz-complex/services/vo/paymentdetailitem'
 import dayjs from 'dayjs'
-import { limitDecimalPlaces } from '@/cp-projectCP/PlanHome/tool/helpersFun-dayjs'
-import { cloneDeep } from 'lodash'
+import { limitDecimalPlaces } from '@/2-biz-complex/cp-projectCP/PlanHome/tool/helpersFun-dayjs'
+import planService from '@/2-biz-complex/services/planService'
+import type { RPaymentPlanSplitVO } from '@/2-biz-complex/services/vo/paymentplansplit'
+// import { update } from 'lodash'
+import paymentplansplit from '@/2-biz-complex/services/paymentplansplit'
+// import { cloneDeep } from 'lodash'
 
 export const usePlanStore = defineStore('plan', {
   // 其他配置...
@@ -31,7 +38,8 @@ export const usePlanStore = defineStore('plan', {
         selectID: '', // 要更新的对象
         loading: false, // store 的数据 (data)
         paymentAmountArr: [] as number[],
-        loadingForTable: false
+        loadingForTable: false,
+        unityItems: [] as any[]
       }
     }
   }, // store 的数据 (data)
@@ -93,6 +101,45 @@ export const usePlanStore = defineStore('plan', {
     }
   },
   actions: {
+    async getObjIndex(paymentId: string) {
+      console.log('myID:', paymentId)
+      const payments = this.data?.RItems[0]?.payment_detail_items as RPaymentDetailItemVO[]
+      const index = payments.findIndex((item: RPaymentDetailItemVO) => item.id === paymentId)
+      console.log('getindex:', index)
+      return { index }
+    },
+    async updatePaymentPlanSplit(index: number, item: RPaymentPlanSplitVO) {
+      if (index !== -1) {
+        // const getArr = this.data.RItems[0].payment_detail_items[index]
+        //   .payment_plan_splits as unknown as RPaymentPlanSplitVO[]
+        this.data.RItems[0].payment_detail_items[index].payment_plan_splits.push(item)
+      }
+    },
+    async deletePaymentPlanSplit(
+      obj: RPaymentPlanSplitVO,
+      splitIndex: number,
+      paymentIndex: number
+    ) {
+      // 需要 paymentItem 的 index
+      // 需要 split 的 index
+
+      paymentplansplit.delete(obj?.id as string).then(() => {
+        message.success('删除成功')
+        this.data.RItems[0].payment_detail_items[paymentIndex].payment_plan_splits.splice(
+          splitIndex,
+          1
+        )
+      })
+      // message.success('删除成功')
+    },
+    async updateSelectID(id: string, name: string, obj: RPlanVO) {
+      this.data.selectID = id
+      this.data.selectName = name
+      this.data.RItem = obj
+    },
+    // async clearSelectID() {
+    //   this.data.selectID = ''
+    // },
     switchToggleChangeForTable() {
       this.data.loadingForTable = !this.data.loadingForTable ? true : false
     },
@@ -153,6 +200,22 @@ export const usePlanStore = defineStore('plan', {
       // this.data.CUItem = {}
       Object.assign(this.data.CUItem, {})
     },
+
+    async init() {
+      this.data.loading = true
+      const response = (await planService.init()) as ApiResults<any>
+      console.log('response,', response)
+
+      if (response) {
+        this.data.CItem = response.data[0]
+        // 更新本地 state 中的 unity 数据 -------------------------------------------
+
+        // this.data.RItems.unshift(response.data[0])
+        this.data.loading = false
+        message.success('方案init成功')
+        // this.read()
+      }
+    },
     async initState() {
       const response = await customApi.planControllerGetInit()
       const getResponseData = response.data as unknown as ApiResponse<CPlanVO>
@@ -183,8 +246,9 @@ export const usePlanStore = defineStore('plan', {
 
     async readById(id: string): Promise<RPlanVO> {
       this.data.loading = true
-      const response = (await planService.readById(id)) as ApiResults<RPlanVO>
+      const response = (await planService.readById(id)) as ApiResults<any>
       if (response) {
+        this.data.UItem = response.data[0]
         this.data.UItem = response.data[0]
         this.data.loading = false
       }
@@ -193,13 +257,43 @@ export const usePlanStore = defineStore('plan', {
 
     async update(id: string, requestBody: any) {
       this.data.loading = true
-      const response = (await planService.update(id, requestBody)) as ApiResults<UPlanVO>
+      console.log('requestBody^', requestBody)
+      const response = (await planService.update(id, requestBody)) as ApiResults<any>
       if (response) {
         const item = response.data[0]
-        const index = this.data.RItems.findIndex((item: UPlanVO) => item.id === id)
+        console.log('item^', item)
+
+        const index = this.data.RItems.findIndex((item: any) => item.id === id)
         if (index !== -1) {
           // 说明该找到了，有这个值。
           // 更新好的数据 response.data 来 赋值给 this.party[index],（更新了本地的状态数据）
+          this.data.RItems[index] = item
+        }
+        this.data.loading = false
+        message.success('更新成功!')
+      }
+    },
+    async updateForpayment(
+      id: string,
+      requestBody: CPlanVO,
+      obj: RPaymentDetailItemVO,
+      addItem: RPaymentPlanSplitVO
+    ) {
+      this.data.loading = true
+      const { index } = await this.getObjIndex(obj.id as string)
+      if (index !== -1) {
+        requestBody.payment_detail_items[index].payment_plan_splits.push(addItem)
+      }
+      const response = (await planService.update(id, requestBody)) as ApiResults<any>
+      if (response) {
+        const item = response.data[0]
+        console.log('item---------------------------^', item)
+
+        const index = this.data.RItems.findIndex((item: any) => item.id === id)
+        if (index !== -1) {
+          // 说明该找到了，有这个值。
+          // 更新好的数据 response.data 来 赋值给 this.party[index],（更新了本地的状态数据）
+          this.data.CUItem = item
           this.data.RItems[index] = item
         }
         this.data.loading = false
@@ -216,6 +310,9 @@ export const usePlanStore = defineStore('plan', {
         message.success('删除成功!')
       }
     },
+    async clearSelectID() {
+      this.data.selectID = ''
+    },
     // --------------------------------------------------------------------------------------
     async createPlanByClientId(clientId: string, requestBody: any) {
       // /**默认值
@@ -231,7 +328,7 @@ export const usePlanStore = defineStore('plan', {
         console.log('response--,', response)
 
         this.data.RItems.unshift(response?.data[0])
-        this.data.total = this.totalCal(this.data.total as number) // 更新total
+        this.data.total = this.totalCal(this.data?.total as number) // 更新total
         this.data.loading = false
         message.success('创建客户信息成功')
       }
@@ -257,17 +354,45 @@ export const usePlanStore = defineStore('plan', {
       // const getResponseData = response.data as unknown as ApiResponse<ReadPlanDTO>
       if (response) {
         // 调整paymentItem中的排序
-        response.data[0]?.payment_detail_items?.sort((a: any, b: any) => {
+        response?.data[0]?.payment_detail_items?.sort((a: any, b: any) => {
           if (a.period_start?.isBefore(b.period_start)) return -1
           if (a.period_start?.isAfter(b.period_start)) return 1
           return 0
         })
-        this.data.RItems = response.data
-        this.data.total = response.total as number
+        this.data.RItems = response?.data
+        this.data.total = response?.total as number
       }
-      console.log('readByClientId--------', response.data)
+      console.log('readByClientId--------', response?.data)
       this.data.loading = false
-      return response.data
+      return response?.data
+    },
+
+    async readByPartySoftwareId(
+      partysoftwareId: string,
+      params: any = {
+        current: 1,
+        pagesize: 10
+      }
+    ): Promise<any> {
+      this.data.loading = true
+      const response = (await planService.readPlanByPartySoftwareId(
+        partysoftwareId,
+        params
+      )) as ApiResults<RPlanVO>
+      // const getResponseData = response.data as unknown as ApiResponse<ReadPlanDTO>
+      if (response) {
+        // 调整paymentItem中的排序
+        response?.data[0]?.payment_detail_items?.sort((a: any, b: any) => {
+          if (a.period_start?.isBefore(b.period_start)) return -1
+          if (a.period_start?.isAfter(b.period_start)) return 1
+          return 0
+        })
+        this.data.RItems = response?.data
+        this.data.total = response?.total as number
+      }
+      console.log('readByClientId--------', response?.data)
+      this.data.loading = false
+      return response?.data
     }
   }
   // -------------------------------

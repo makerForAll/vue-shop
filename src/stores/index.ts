@@ -7,7 +7,8 @@ export * from './counter'
 export * from './party'
 export * from './plan'
 export * from './unity'
-// import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+pinia.use(piniaPluginPersistedstate)
 // import { createPersistedState } from 'pinia-plugin-persistedstate'
 // pinia.use( createPersistedState({
 //     storage: sessionStorage,

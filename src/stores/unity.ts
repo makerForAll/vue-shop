@@ -2,12 +2,12 @@ import { defineStore } from 'pinia'
 import { message } from 'ant-design-vue'
 
 // ------------------------------
-import type { ApiResults } from '@/services/vo/models-common'
+import type { ApiResults } from '@/0-manage-hub/services/common/models-common'
 //------------------------------------------
 
 import customApi from '@/custom/api/core/custom-http-client' // 导入自定义 API 实例
-import type { CUnityVO, RUnityVO, UUnityVO } from '@/services/vo/unity'
-import unityService from '@/services/unityService'
+import type { CUnityVO, RUnityVO, UUnityVO } from '@/2-biz-complex/services/vo/unity'
+import unityService from '@/2-biz-complex/services/unityService'
 
 export const useUnityStore = defineStore('unity', {
   // 其他配置...
@@ -40,20 +40,21 @@ export const useUnityStore = defineStore('unity', {
     // getKeyToState: (state) => {
     //   return (data: number) => (state.data.tabsKey = data)
     // },
-    getInit: (state) => {
-      return () => {
-        // 完整的初始化对象，确保包含所有必需的字段
-        const defaultValue: CUnityVO = {
-          plan: null,
-          code: '',
-          area: 0,
-          shared_area: 0,
-          coordinates: '',
-          angle: 0
-        }
-        state.data.CItem = defaultValue
-      }
-    }
+    // getInit: (state) => {
+    //   return () => {
+    //     // 完整的初始化对象，确保包含所有必需的字段
+    //     const defaultValue: CUnityVO = {
+    //       plan: null,
+    //       code: '',
+    //       area: 0,
+    //       shared_area: 0,
+    //       coordinates: '',
+    //       angle: 0,
+    //       partySoftware: null
+    //     }
+    //     state.data.CItem = defaultValue
+    //   }
+    // }
   },
   actions: {
     async updateSelectID(id: string, name: string) {
@@ -62,6 +63,22 @@ export const useUnityStore = defineStore('unity', {
     },
     async clearSelectID() {
       this.data.selectID = ''
+    },
+
+    async init() {
+      this.data.loading = true
+      const response = (await unityService.init()) as ApiResults<RUnityVO>
+      console.log('response,', response)
+
+      if (response) {
+        this.data.CItem = response.data[0]
+        // 更新本地 state 中的 unity 数据 -------------------------------------------
+
+        // this.data.RItems.unshift(response.data[0])
+        this.data.loading = false
+        message.success('创建甲方信息成功')
+        // this.read()
+      }
     },
     async create(data: any) {
       this.data.loading = true
@@ -140,6 +157,50 @@ export const useUnityStore = defineStore('unity', {
         message.error(`请求错误!:${error}`)
         console.error('Error updating data:', error)
         throw error
+      }
+    },
+
+    // ----------------------------------------------------------
+    async readObjsByFieldId(
+      partyId: string,
+      params: any = {
+        current: 1,
+        pagesize: 10
+      },
+      filters: any = {}
+    ): Promise<RUnityVO[]> {
+      this.data.loading = true
+      // 异步编程获取数据
+      const response = (await unityService.readObjsByFieldId(
+        partyId,
+        params,
+        filters
+      )) as ApiResults<RUnityVO>
+      if (response) {
+        this.data.RItems = response.data as RUnityVO[]
+        this.data.total = response.total as number
+        this.data.loading = false
+        message.success('获取信息成功')
+      }
+      return response?.data
+    },
+    async createObjByFieldId(fieldId: string, data: any) {
+      this.data.loading = true
+      const response = (await unityService.createObjByFieldId(
+        fieldId,
+        data
+      )) as ApiResults<RUnityVO>
+      // const response = (await customApi.clientControllerCreate(data)) as ApiResults<CClientVO>
+      console.log('response,', response)
+
+      if (response) {
+        this.data.CItem = response.data[0]
+        // 更新本地 state 中的 party 数据 -------------------------------------------
+
+        this.data.RItems.unshift(response.data[0])
+        this.data.loading = false
+        message.success('创建客户信息成功')
+        // this.read()
       }
     }
   }

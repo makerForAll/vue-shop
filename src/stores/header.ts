@@ -2,7 +2,8 @@ import { defineStore } from 'pinia'
 export const useHeaderStore = defineStore('header', {
   state: () => ({
     scale: 1,
-    drawerVisible: false
+    drawerVisible: false,
+    partysoftwareId: ''
   }),
 
   getters: {
