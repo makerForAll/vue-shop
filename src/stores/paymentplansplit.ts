@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-export const usePlanStore = defineStore('paymentdetailItem', {
+export const usePlanStore = defineStore('paymentplansplit', {
   state: () => ({
     // plan: {} as RPlanVO
   }),

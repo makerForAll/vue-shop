@@ -22,7 +22,7 @@
         :dataSource="planStore.data.CUItem.payment_detail_items"
         :columns="innerColumns"
       >
-        <template #bodyCell="{ text, record, column, index }">
+        <template #bodyCell="{ record, column, index }">
           <!-- {{ text }} -->
           <!-- {{ column.key }} -->
           <span v-if="column.dataIndex === 'index'">{{ index + 1 }}</span>
@@ -55,7 +55,7 @@
           <template v-else-if="column.key === 'operation'">
             <span class="table-operation">
               <a-button>编辑Item</a-button>
-              <a-button @click="add(record)">添加Item</a-button>
+              <a-button @click="add(record, index)">添加Item</a-button>
             </span>
           </template>
           <!-- <span v-else>{{ text }}</span> -->
@@ -71,7 +71,7 @@
             :data-source="outerRecord.payment_plan_splits"
             :pagination="false"
           >
-            <template #bodyCell="{ record, column, text, index }">
+            <template #bodyCell="{ record, column, index }">
               <template v-if="column.key === 'index'">
                 <span>
                   <a-tag color="blue">
@@ -182,9 +182,9 @@
 <script setup lang="ts">
 import type { RPaymentDetailItemVO } from '@/2-biz-complex/services/vo/paymentdetailitem'
 import type { RPaymentPlanSplitVO } from '@/2-biz-complex/services/vo/paymentplansplit'
-import type { RPlanVO, UPlanVO } from '@/2-biz-complex/services/vo/plan'
+// import type { RPlanVO, UPlanVO } from '@/2-biz-complex/services/vo/plan'
 import { usePlanStore } from '@/stores'
-import dayjs, { Dayjs } from 'dayjs'
+import dayjs from 'dayjs'
 import { cloneDeep } from 'lodash'
 import { reactive, ref, type UnwrapRef } from 'vue'
 import updateBTNView from '@/2-biz-complex/cp-projectCP/PaymentPlansplit/ReadPaymentPlansplit/updateBTN.vue'
@@ -219,7 +219,7 @@ const cancel = (uuid: string) => {
 }
 // 抽屉状态
 const drawerVisible = ref(false)
-const selectedRecord = ref(null)
+// const selectedRecord = ref(null)
 
 // 打开抽屉并设置选中的记录
 const openDrawer = () => {
@@ -303,12 +303,13 @@ const inner2Columns = [
 ]
 
 //-----
-const add = async (obj: RPaymentDetailItemVO) => {
+const add = async (obj: RPaymentDetailItemVO, indexNum: any) => {
   // console.log(toRaw(obj))
   const { index } = await planStore.getObjIndex(obj.id as string)
   // 我要添加的 item值
   const split: RPaymentPlanSplitVO = {
-    index: 1,
+    index: indexNum + 1,
+    childIndex: planStore.data.CUItem.payment_detail_items[index].payment_plan_splits?.length,
     period_start: planStore.data.CUItem.payment_detail_items[index].period_start,
     period_end: planStore.data.CUItem.payment_detail_items[index].period_end,
     payment_amount: planStore.data.CUItem.payment_detail_items[index].amount,
@@ -342,7 +343,7 @@ const remove = async (obj: RPaymentPlanSplitVO, splitIndex: number, paymentIndex
 
 // }
 
-const currentState = ref<string>('data待刷新')
+// const currentState = ref<string>('data待刷新')
 function checkAndUpdateState(obj: RPaymentPlanSplitVO) {
   const today = dayjs() // 当前日期
   const periodStart = obj.period_start // 合同-期间开始

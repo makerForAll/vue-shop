@@ -46,40 +46,105 @@
       </template>
 
       <!-- edit start-->
-      <template #expandedRowRender="{ record: payment_detail_items }">
+      <template #expandedRowRender="{ record }">
         <!-- {{ record.plan.payment_detail_items }} -->
         <a-table
           size="small"
           :scroll="{ x: 800, y: 'auto' }"
           :row-class-name="'tablestyle2'"
-          :columns="inner2Columns"
-          :data-source="payment_detail_items?.payment_plan_splits"
+          :columns="innerColumns"
+          :data-source="record?.plan?.payment_detail_items"
           :pagination="false"
         >
-          <template #bodyCell="{ record, column, text }">
-            <!-- {{ record }} -->
+          <template #bodyCell="{ column, text, index }">
             <template v-if="column.key === 'index'">
               <span>
-                <a-tag color="blue">{{ record.index + '期' }}{{ '-' }}</a-tag>
+                <a-tag color="blue">{{ index + 1 + '期-小计' }}</a-tag>
               </span>
             </template>
+
             <template v-else-if="column.key === 'state'">
-              {{ text }}
+              {{ column.key }}
+              {{ text.state === '已逾期' }}
+              <template v-if="text.state === '已逾期'">
+                <a-badge status="error" />
+                {{ text.state }}
+              </template>
+              <template v-else-if="text.state === '已缴纳'">
+                <a-badge status="success" />
+                {{ text.state }}
+              </template>
+              <template v-else-if="text.state === '未到日期'">
+                <a-badge status="warning" />
+                {{ text.state }}
+              </template>
             </template>
 
-            <template
-              v-else-if="
-                column.key === 'period_start' ||
-                column.key === 'period_end' ||
-                column.key === 'payment_date' ||
-                column.key === 'operation_date'
-              "
-            >
+            <template v-else-if="column.key === 'period_start' || column.key === 'period_end'">
               {{ dayjs(text).format('YYYY-MM-DD') }}
             </template>
             <template v-else>
               {{ text }}
             </template>
+          </template>
+          <template #expandedRowRender="{ record, index: outerIndex }">
+            <!-- {{ record.payment_plan_splits }} -->
+            <a-table
+              :scroll="{ x: 1000, y: 500 }"
+              size="small"
+              bordered
+              :columns="inner2Columns"
+              :data-source="record.payment_plan_splits"
+              :pagination="false"
+            >
+              <template #bodyCell="{ column, text, index }">
+                <!-- {{ record }} -->
+                <template v-if="column.key === 'index'">
+                  <span>
+                    <a-tag color="blue">{{ outerIndex + 1 + '期' }}{{ '-' + (index + 1) }}</a-tag>
+                  </span>
+                </template>
+                <template v-else-if="column.key === 'state'">
+                  {{ text }}
+                </template>
+
+                <template
+                  v-else-if="
+                    column.key === 'period_start' ||
+                    column.key === 'period_end' ||
+                    column.key === 'payment_date' ||
+                    column.key === 'operation_date'
+                  "
+                >
+                  {{ dayjs(text).format('YYYY-MM-DD') }}
+                </template>
+                <!-- <template v-else-if="column.key === 'period_start'">
+                  {{ dayjs(text).format('YYYY-MM-DD') }}
+                </template> -->
+                <!-- <template v-else-if="column.key === 'operation'">
+                  <span class="table-operation">
+                    <a>Pause</a>
+                    <a>Stop</a>
+                    <a-dropdown>
+                      <template #overlay>
+                        <a-menu>
+                          <a-menu-item>Action 1</a-menu-item>
+                          <a-menu-item>Action 2</a-menu-item>
+                        </a-menu>
+                      </template>
+                      <a>
+                        More
+                        <down-outlined />
+                        <down-outlined />
+                      </a>
+                    </a-dropdown>
+                  </span>
+                </template> -->
+                <template v-else>
+                  {{ text }}
+                </template>
+              </template>
+            </a-table>
           </template>
         </a-table>
       </template>
@@ -89,15 +154,14 @@
 </template>
 
 <script lang="ts" setup>
-import type { PlanTreeVO, RPlanVO } from '@/2-biz-complex/services/vo/plan'
+import type { RPlanVO } from '@/2-biz-complex/services/vo/plan'
 import { usePlanStore } from '@/stores'
 import { useCommonStore } from '@/stores/common'
 import { useHeaderStore } from '@/stores/header'
 import dayjs from 'dayjs'
 import { onMounted, ref } from 'vue'
 import { VuePrintNext } from 'vue-print-next'
-// import { DownOutlined } from '@ant-design/icons-vue'
-import type { RPaymentPlanSplitVO } from '@/2-biz-complex/services/vo/paymentplansplit'
+import { DownOutlined } from '@ant-design/icons-vue'
 const commonStore = useCommonStore()
 
 const isPrinting = ref(false)
@@ -176,11 +240,11 @@ interface DataItem {
   payDate: string
   creator: string
   createdAt: string
-  // plan: RPlanVO[]
+  plan: RPlanVO[]
 }
 
 const columnsAlign = ref('left')
-// const innerColumnsAlign = ref('left')
+const innerColumnsAlign = ref('left')
 const inner2ColumnsAlign = ref('center')
 
 const columns = [
@@ -222,51 +286,51 @@ const columns = [
 ]
 
 // 嵌套表格列（展开后的表格显示的列）
-// const innerColumns = [
-//   {
-//     title: '期数',
-//     dataIndex: 'index',
-//     key: 'index',
-//     width: '12%',
-//     className: 'innerc',
-//     align: innerColumnsAlign.value
-//   },
-//   {
-//     title: '期间开始',
-//     dataIndex: 'period_start',
-//     key: 'period_start',
-//     width: '12%',
-//     className: 'innerc',
-//     align: innerColumnsAlign.value
-//   },
-//   {
-//     title: '期间结束',
-//     dataIndex: 'period_end',
-//     key: 'period_end',
-//     width: '15%',
-//     className: 'innerc',
-//     align: innerColumnsAlign.value
-//   },
-//   {
-//     title: '应收金额',
-//     dataIndex: 'amount',
-//     key: 'amount',
-//     width: '20%',
-//     className: 'innerc',
-//     align: innerColumnsAlign.value
-//   },
-//   {
-//     title: '备注',
-//     dataIndex: 'remarks',
-//     key: 'remarks',
-//     width: '36%',
-//     align: innerColumnsAlign.value
-//   }
-// ]
+const innerColumns = [
+  {
+    title: '期数',
+    dataIndex: 'index',
+    key: 'index',
+    width: '12%',
+    className: 'innerc',
+    align: innerColumnsAlign.value
+  },
+  {
+    title: '期间开始',
+    dataIndex: 'period_start',
+    key: 'period_start',
+    width: '12%',
+    className: 'innerc',
+    align: innerColumnsAlign.value
+  },
+  {
+    title: '期间结束',
+    dataIndex: 'period_end',
+    key: 'period_end',
+    width: '15%',
+    className: 'innerc',
+    align: innerColumnsAlign.value
+  },
+  {
+    title: '应收金额',
+    dataIndex: 'amount',
+    key: 'amount',
+    width: '20%',
+    className: 'innerc',
+    align: innerColumnsAlign.value
+  },
+  {
+    title: '备注',
+    dataIndex: 'remarks',
+    key: 'remarks',
+    width: '36%',
+    align: innerColumnsAlign.value
+  }
+]
 
 const inner2Columns = [
   {
-    title: '期数-段数',
+    title: '分段',
     dataIndex: 'index',
     key: 'index',
     width: '12%',
@@ -355,27 +419,20 @@ onMounted(async () => {
   })
 })
 
-// 很重要的映射展示
 function transformAPIData(apiData: any[]): DataItem[] {
-  return apiData.map((plan: PlanTreeVO) => ({
-    id: plan?.id as string,
-    name: plan.client?.name as string, // 映射 API 数据中的 plan.client.name 到表格中的 name
+  return apiData.map((plan) => ({
+    id: plan.id,
+    name: plan.client.name, // 映射 API 数据中的 plan.client.name 到表格中的 name
     idcard: '', // 假设没有身份证字段，可以留空或者从 API 数据中找到合适的字段
     area: plan.total_area ? plan.total_area.toString() : '0',
-    code: plan.unitys?.map((unity: any) => unity.code) as string[], // 提取单元的 code 作为位置
+    code: plan.unitys.map((unity: any) => unity.code), // 提取单元的 code 作为位置
     total_amount: `￥${plan.total_amount}`, // 将总金额格式化为金额字符串
     state: plan.contract_status === '1' ? '当期已缴纳' : '已逾期', // 状态的简单映射
-    createdAt: plan.createdAt as any,
+    createdAt: plan.createdAt,
     platform: '', // 假设 platform 在 API 数据中没有，可以留空或者映射其他字段
     payDate: '', // 假设 payDate 在 API 数据中没有，可以留空或者映射其他字段
     creator: 'Jack', // 如果有创建者信息，可以从 API 数据中找到合适字段
-    plan: plan as PlanTreeVO,
-    payment_plan_splits: plan.payment_detail_items.reduce(
-      (accumulator: RPaymentPlanSplitVO[], current) => {
-        return accumulator.concat(current?.payment_plan_splits)
-      },
-      []
-    )
+    plan: plan
     // plan: plan.payment_detail_items.map((item: any, index: number) => ({
     //   id: plan.id,
     //   beginDate: `${item.period_start.format('YYYY-MM-DD')}`,
@@ -510,9 +567,9 @@ body {
   table-layout: fixed;
 }
 
-/* .ant-table-row {
-  background-color: lightblue;
-} */
+.ant-table-row {
+  /* background-color: lightblue; */
+}
 
 .ant-table th,
 .ant-table td {

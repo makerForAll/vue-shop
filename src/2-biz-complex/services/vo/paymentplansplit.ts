@@ -1,8 +1,8 @@
 // import type { CreatePlanDTO, ReadPlanDTO, UpdatePlanDTO } from '@/generated/data-contracts'
 import type {
-  CreatePaymentDetailItemDTO,
+  // CreatePaymentDetailItemDTO,
   CreatePaymentPlanSplitDTO,
-  UpdatePaymentDetailItemDTO,
+  // UpdatePaymentDetailItemDTO,
   UpdatePaymentPlanSplitDTO
 } from '@/generated/data-contracts'
 

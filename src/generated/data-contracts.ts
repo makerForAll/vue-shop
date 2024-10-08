@@ -278,8 +278,10 @@ export interface ReadClientDTO {
 export interface ReadPaymentPlanSplitDTO {
   /** ID */
   id?: string
-  /** 序号 */
+  /** 期数 */
   index?: number
+  /** 段数 */
+  childIndex?: number
   /** 支付金额 */
   payment_amount?: number
   /** 状态 */
@@ -462,8 +464,10 @@ export interface ReadPlanDTO {
 export interface CreatePaymentPlanSplitDTO {
   /** ID */
   id?: string
-  /** 序号 */
+  /** 期数 */
   index?: number
+  /** 段数 */
+  childIndex?: number
   /** 支付金额 */
   payment_amount?: number
   /** 状态 */
@@ -684,6 +688,155 @@ export interface CreatePlanDTO {
   unitys?: Unity[]
 }
 
+export interface TreePaymentPlanSplitDTO {
+  /** ID */
+  id?: string
+  /** 期数 */
+  index?: number
+  /** 段数 */
+  childIndex?: number
+  /** 支付金额 */
+  payment_amount?: number
+  /** 状态 */
+  state?: number
+  /** 状态 */
+  set_state_model?: number
+  /** 依据链接 */
+  referencelink?: string
+  /** 备注 */
+  remarks?: string
+  /** 押金抵扣 */
+  deposit_deduction?: number
+  /** 押金余额 */
+  deposit_balance?: number
+  /**
+   * 开始期间
+   * @format date-time
+   */
+  period_start: string
+  /**
+   * 截止期间
+   * @format date-time
+   */
+  period_end: string
+  /**
+   * 支付截止日期
+   * @format date-time
+   */
+  payment_date: string
+  /**
+   * 操作日期
+   * @format date-time
+   */
+  operation_date: string
+}
+
+export interface TreePaymentDetailItemDTO {
+  /**
+   * 开始期间
+   * @format date-time
+   */
+  period_start: string
+  /**
+   * 截止期间
+   * @format date-time
+   */
+  period_end: string
+  /** 金额 */
+  amount: number
+  /**
+   * 到期时间
+   * @format date-time
+   */
+  due_date: string
+  /** 备注 */
+  remarks?: string
+  /** 依据链接 */
+  referencelink?: string
+  /** ID */
+  id?: string
+  /** 分期付款计划 */
+  payment_plan_splits?: TreePaymentPlanSplitDTO[]
+}
+
+export interface TreePlanDTO {
+  /** 方案名称 */
+  name?: string
+  /** 位置1 */
+  first_name?: string
+  /**
+   * 面积1
+   * @default 0
+   */
+  first_area?: number
+  /** 单价1 */
+  first_price?: number
+  /** 位置2 */
+  second_name?: string
+  /** 面积2 */
+  second_area?: number
+  /** 单价2 */
+  second_price?: number
+  /** 位置3 */
+  third_name?: string
+  /** 面积3 */
+  third_area?: number
+  /** 单价3 */
+  third_price?: number
+  /** 总面积 */
+  total_area?: number
+  /** 平均单价 */
+  average_price?: number
+  /** 初期每月费用 */
+  initial_monthly_price?: number
+  /** 合同类型 */
+  contract_type?: string
+  /** 合同状态 */
+  contract_status?: string
+  /** 记录类型 */
+  record_type?: string
+  /** 是否为默认值 */
+  is_default?: boolean
+  /** 合同的天数 */
+  contract_duration_days?: number
+  /** 支付方式（每多少个月） */
+  payment_interval_months?: number
+  /** 增长率条件（每多少个月） */
+  increase_interval_months?: number
+  /** 增长率（百分比） */
+  increase_rate?: number
+  /** 押金（元） */
+  deposit?: number
+  /** 减免（月） */
+  rent_free_months?: number
+  /** 首次支付费用截止日期为合同生效日期后的第几天 */
+  initial_payment_duedays?: number
+  /** 每期支付费用截止日期为每期应当提前多少月 */
+  recurring_payment_duedays?: number
+  /** 合同总金额 */
+  total_amount?: number
+  /** 备注 */
+  remarks?: string
+  /** 单元储存 */
+  save_unity_data?: string[]
+  /** 不动产单元储存 */
+  rel_store?: string[]
+  /** 不动产单元储存2 */
+  rel_store2?: string[]
+  /** 不动产单元储存3 */
+  rel_store3?: string[]
+  /** ID */
+  id?: string
+  /** 合同生效期间，起始时间-截止时间 */
+  startdate_and_enddate?: string[]
+  /** 乙方客户 */
+  client?: ReadClientDTO
+  /** 支付明细 */
+  payment_detail_items?: TreePaymentDetailItemDTO[]
+  /** 支付明细 */
+  unitys?: BaseUnityDTO[]
+}
+
 export interface UpdatePaymentDetailItemDTO {
   /**
    * 开始期间
@@ -715,8 +868,10 @@ export interface UpdatePaymentDetailItemDTO {
 export interface UpdatePaymentPlanSplitDTO {
   /** ID */
   id?: string
-  /** 序号 */
+  /** 期数 */
   index?: number
+  /** 段数 */
+  childIndex?: number
   /** 支付金额 */
   payment_amount?: number
   /** 状态 */
@@ -1077,7 +1232,7 @@ export interface PlanControllerFindPlanByPartysoftwareIdParams {
   partysoftwareId: string
 }
 
-export type PlanControllerFindPlanByPartysoftwareIdData = any
+export type PlanControllerFindPlanByPartysoftwareIdData = TreePlanDTO
 
 export interface PaymentdetailitemControllerFindAllParams {
   /**

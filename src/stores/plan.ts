@@ -282,7 +282,7 @@ export const usePlanStore = defineStore('plan', {
       this.data.loading = true
       const { index } = await this.getObjIndex(obj.id as string)
       if (index !== -1) {
-        requestBody.payment_detail_items[index].payment_plan_splits.push(addItem)
+        requestBody.payment_detail_items[index]?.payment_plan_splits.push(addItem)
       }
       const response = (await planService.update(id, requestBody)) as ApiResults<any>
       if (response) {

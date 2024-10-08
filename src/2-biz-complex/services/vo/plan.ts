@@ -1,4 +1,9 @@
-import type { CreatePlanDTO, ReadPlanDTO, UpdatePlanDTO } from '@/generated/data-contracts'
+import type {
+  CreatePlanDTO,
+  ReadPlanDTO,
+  TreePlanDTO,
+  UpdatePlanDTO
+} from '@/generated/data-contracts'
 
 import type dayjs from 'dayjs'
 import type {
@@ -26,6 +31,14 @@ export interface UPlanVO
 
 export interface RPlanVO
   extends Omit<ReadPlanDTO, 'client' | 'createdAt' | 'payment_detail_items'> {
+  id?: string
+  createdAt: dayjs.Dayjs
+  payment_detail_items: RPaymentDetailItemVO[]
+  client?: RClientVO
+}
+
+export interface PlanTreeVO
+  extends Omit<TreePlanDTO, 'client' | 'createdAt' | 'payment_detail_items'> {
   id?: string
   createdAt: dayjs.Dayjs
   payment_detail_items: RPaymentDetailItemVO[]

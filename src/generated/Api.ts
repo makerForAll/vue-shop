@@ -710,7 +710,6 @@ export class Api<SecurityDataType = unknown> extends HttpClient<SecurityDataType
    *
    * @tags plan
    * @name PlanControllerFindPlanByPartysoftwareId
-   * @summary 获取指定 partysoftwareId 中的所有Plan
    * @request GET:/api/v1/partysoftware/{partysoftwareId}/plan
    */
   planControllerFindPlanByPartysoftwareId = (
@@ -721,6 +720,7 @@ export class Api<SecurityDataType = unknown> extends HttpClient<SecurityDataType
       path: `/api/v1/partysoftware/${partysoftwareId}/plan`,
       method: 'GET',
       query: query,
+      format: 'json',
       ...params
     })
   /**
