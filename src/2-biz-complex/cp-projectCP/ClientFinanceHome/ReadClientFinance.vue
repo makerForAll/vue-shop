@@ -63,7 +63,7 @@
               </span>
             </template>
 
-            <template v-if="column.key === 'state'">
+            <template v-else-if="column.key === 'state'">
               {{ column.key }}
               {{ text.state === '已逾期' }}
               <template v-if="text.state === '已逾期'">
@@ -79,6 +79,13 @@
                 {{ text.state }}
               </template>
             </template>
+
+            <template v-else-if="column.key === 'period_start' || column.key === 'period_end'">
+              {{ dayjs(text).format('YYYY-MM-DD') }}
+            </template>
+            <template v-else>
+              {{ text }}
+            </template>
           </template>
           <template #expandedRowRender="{ record, index: outerIndex }">
             <!-- {{ record.payment_plan_splits }} -->
@@ -91,15 +98,30 @@
               :pagination="false"
             >
               <template #bodyCell="{ column, text, index }">
+                <!-- {{ record }} -->
                 <template v-if="column.key === 'index'">
                   <span>
                     <a-tag color="blue">{{ outerIndex + 1 + '期' }}{{ '-' + (index + 1) }}</a-tag>
                   </span>
                 </template>
-                <template v-if="column.key === 'state'">
+                <template v-else-if="column.key === 'state'">
                   {{ text }}
                 </template>
-                <template v-else-if="column.key === 'operation'">
+
+                <template
+                  v-else-if="
+                    column.key === 'period_start' ||
+                    column.key === 'period_end' ||
+                    column.key === 'payment_date' ||
+                    column.key === 'operation_date'
+                  "
+                >
+                  {{ dayjs(text).format('YYYY-MM-DD') }}
+                </template>
+                <!-- <template v-else-if="column.key === 'period_start'">
+                  {{ dayjs(text).format('YYYY-MM-DD') }}
+                </template> -->
+                <!-- <template v-else-if="column.key === 'operation'">
                   <span class="table-operation">
                     <a>Pause</a>
                     <a>Stop</a>
@@ -117,6 +139,9 @@
                       </a>
                     </a-dropdown>
                   </span>
+                </template> -->
+                <template v-else>
+                  {{ text }}
                 </template>
               </template>
             </a-table>
@@ -133,7 +158,7 @@ import type { RPlanVO } from '@/2-biz-complex/services/vo/plan'
 import { usePlanStore } from '@/stores'
 import { useCommonStore } from '@/stores/common'
 import { useHeaderStore } from '@/stores/header'
-// import dayjs from 'dayjs';
+import dayjs from 'dayjs'
 import { onMounted, ref } from 'vue'
 import { VuePrintNext } from 'vue-print-next'
 import { DownOutlined } from '@ant-design/icons-vue'
@@ -272,16 +297,16 @@ const innerColumns = [
   },
   {
     title: '期间开始',
-    dataIndex: 'beginDate',
-    key: 'beginDate',
+    dataIndex: 'period_start',
+    key: 'period_start',
     width: '12%',
     className: 'innerc',
     align: innerColumnsAlign.value
   },
   {
     title: '期间结束',
-    dataIndex: 'endDate',
-    key: 'endDate',
+    dataIndex: 'period_end',
+    key: 'period_end',
     width: '15%',
     className: 'innerc',
     align: innerColumnsAlign.value
@@ -313,21 +338,21 @@ const inner2Columns = [
   },
   {
     title: '期间开始',
-    dataIndex: 'beginDate',
-    key: 'beginDate',
+    dataIndex: 'period_start',
+    key: 'period_start',
     width: '15%',
     align: inner2ColumnsAlign.value
   },
   {
     title: '期间结束',
-    dataIndex: 'endDate',
-    key: 'endDate',
+    dataIndex: 'period_end',
+    key: 'period_end',
     width: '15%',
     align: inner2ColumnsAlign.value
   },
   {
     title: '实收金额',
-    dataIndex: 'amount',
+    dataIndex: 'payment_amount',
     key: 'amount',
     width: '20%',
     align: inner2ColumnsAlign.value
@@ -340,9 +365,16 @@ const inner2Columns = [
     align: inner2ColumnsAlign.value
   },
   {
+    title: '分段截止日期',
+    dataIndex: 'payment_date',
+    key: 'payment_date',
+    width: '15%',
+    align: inner2ColumnsAlign.value
+  },
+  {
     title: '实际支付日期',
-    dataIndex: 'paymentDate',
-    key: 'paymentDate',
+    dataIndex: 'operation_date',
+    key: 'operation_date',
     width: '15%',
     align: inner2ColumnsAlign.value
   },

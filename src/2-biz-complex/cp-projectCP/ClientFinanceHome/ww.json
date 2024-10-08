@@ -1,0 +1,30 @@
+{
+  "period_start": "2024-07-11T03:49:23.000Z",
+  "period_end": "2025-07-10T03:49:23.000Z",
+  "amount": 14399,
+  "due_date": "2024-06-11T03:49:23.000Z",
+  "remarks": "",
+  "referencelink": null,
+  "createdAt": "2024-10-07T08:19:46.699Z",
+  "id": "8f0e6334-5495-4a84-a557-a3d935809bc2",
+  "planId": "d6519329-8f76-488f-bf53-556cbf2bedf1",
+  "payment_plan_splits": [
+    {
+      "payment_amount": 14399,
+      "state": 0,
+      "set_state_model": 1,
+      "referencelink": "",
+      "remarks": "",
+      "deposit_deduction": 0,
+      "deposit_balance": 1500,
+      "period_start": "2024-07-11T03:49:23.000Z",
+      "period_end": "2025-07-10T03:49:23.000Z",
+      "payment_date": "2024-06-11T03:49:23.000Z",
+      "operation_date": "2024-10-07T13:25:22.000Z",
+      "createdAt": "2024-10-07T13:25:22.289Z",
+      "id": "b2273591-bab1-4d0d-b8f1-fbf857628974",
+      "index": 1,
+      "paymentDetailItemId": "8f0e6334-5495-4a84-a557-a3d935809bc2"
+    }
+  ]
+}
