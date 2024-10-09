@@ -10,7 +10,10 @@
 
 <script setup lang="ts">
 import ButtonSlotView from '@/cp-v1/cp-GCP/Button/ButtonSlot.vue'
-import type { CPaymentDetailItemVO } from '@/2-biz-complex/services/vo/paymentdetailitem'
+import type {
+  CPaymentDetailItemVO,
+  RPaymentDetailItemVO
+} from '@/2-biz-complex/services/vo/paymentdetailitem'
 import type { RPlanVO } from '@/2-biz-complex/services/vo/plan'
 import { usePlanStore } from '@/stores/plan'
 import message from 'ant-design-vue/es/message'
@@ -51,12 +54,12 @@ const handleShareArea = (obj: RPlanVO) => {
     '0'
   )
   // planStore.data.paymentAmountArr = paymentAmountArr;
-  // // 将没有减免条件情况下 生成支付明细数据给 getObj
-  getObj.payment_detail_items = paymentDetails
+  // 将没有减免条件情况下生成支付明细数据给 getObj
+  getObj.payment_detail_items = paymentDetails as RPaymentDetailItemVO[] // 新明细周期
   // ----------------------------
 
   // 函数需要的值
-  const paymentItems = getObj.payment_detail_items as unknown as CPaymentDetailItemVO[] // 新 明细周期
+  const paymentItems = getObj.payment_detail_items as RPaymentDetailItemVO[] // 新明细周期
   const amountArr = paymentItems.map((item) => item.amount)
   const increase_rate = obj.increase_rate as number // 旧 百分比
   const totalAmount = obj.total_amount as number // 旧 合同总金额

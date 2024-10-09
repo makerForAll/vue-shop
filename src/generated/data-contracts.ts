@@ -106,6 +106,8 @@ export interface UpdatePartySoftWareDTO {
 export interface UpdateClientDTO {
   /** 乙方名称 */
   name: string
+  /** ID号码 */
+  IDcard?: string
   /** 联系人 */
   contact: string
   /** 联系号码 */
@@ -138,6 +140,8 @@ export interface UpdateClientDTO {
 export interface CreateClientDTO {
   /** 乙方名称 */
   name: string
+  /** ID号码 */
+  IDcard?: string
   /** 联系人 */
   contact: string
   /** 联系号码 */
@@ -244,6 +248,8 @@ export interface UpdateUnityDTO {
 export interface ReadClientDTO {
   /** 乙方名称 */
   name: string
+  /** ID号码 */
+  IDcard?: string
   /** 联系人 */
   contact: string
   /** 联系号码 */
@@ -279,9 +285,9 @@ export interface ReadPaymentPlanSplitDTO {
   /** ID */
   id?: string
   /** 期数 */
-  index?: number
+  index?: string
   /** 段数 */
-  childIndex?: number
+  childIndex?: string
   /** 支付金额 */
   payment_amount?: number
   /** 状态 */
@@ -465,9 +471,9 @@ export interface CreatePaymentPlanSplitDTO {
   /** ID */
   id?: string
   /** 期数 */
-  index?: number
+  index?: string
   /** 段数 */
-  childIndex?: number
+  childIndex?: string
   /** 支付金额 */
   payment_amount?: number
   /** 状态 */
@@ -692,9 +698,9 @@ export interface TreePaymentPlanSplitDTO {
   /** ID */
   id?: string
   /** 期数 */
-  index?: number
+  index?: string
   /** 段数 */
-  childIndex?: number
+  childIndex?: string
   /** 支付金额 */
   payment_amount?: number
   /** 状态 */
@@ -869,9 +875,9 @@ export interface UpdatePaymentPlanSplitDTO {
   /** ID */
   id?: string
   /** 期数 */
-  index?: number
+  index?: string
   /** 段数 */
-  childIndex?: number
+  childIndex?: string
   /** 支付金额 */
   payment_amount?: number
   /** 状态 */

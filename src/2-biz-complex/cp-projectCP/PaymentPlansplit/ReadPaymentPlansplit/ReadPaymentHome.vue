@@ -74,9 +74,7 @@
             <template #bodyCell="{ record, column, index }">
               <template v-if="column.key === 'index'">
                 <span>
-                  <a-tag color="blue">
-                    {{ outerIndex + 1 + '期' }}{{ '-' + (index + 1) + '段' }}</a-tag
-                  >
+                  <a-tag color="blue"> {{ record.index }}</a-tag>
                 </span>
               </template>
               <!-- record[column.key] -->
@@ -303,13 +301,13 @@ const inner2Columns = [
 ]
 
 //-----
-const add = async (obj: RPaymentDetailItemVO, indexNum: any) => {
+const add = async (obj: RPaymentDetailItemVO, indexString: any) => {
   // console.log(toRaw(obj))
   const { index } = await planStore.getObjIndex(obj.id as string)
   // 我要添加的 item值
   const split: RPaymentPlanSplitVO = {
-    index: indexNum + 1,
-    childIndex: planStore.data.CUItem.payment_detail_items[index].payment_plan_splits?.length,
+    index: `${indexString + 1} - ${Number(planStore.data.CUItem.payment_detail_items[index].payment_plan_splits?.length) + 1}`,
+    childIndex: '0',
     period_start: planStore.data.CUItem.payment_detail_items[index].period_start,
     period_end: planStore.data.CUItem.payment_detail_items[index].period_end,
     payment_amount: planStore.data.CUItem.payment_detail_items[index].amount,

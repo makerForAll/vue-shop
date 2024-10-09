@@ -237,7 +237,6 @@
                     <td>备注</td>
                   </tr>
                 </thead>
-                <div></div>
                 <tbody>
                   <tr
                     v-for="(payment, index) in planStore.sortedPaymentItems(
@@ -412,7 +411,7 @@ import { VuePrintNext } from 'vue-print-next'
 import { useHeaderStore } from '@/stores/header'
 // import { cloneDeep } from 'lodash';
 import { useCommonStore } from '@/stores/common'
-import { usePartySoftwareStore } from '@/stores/partysoftware'
+// import { usePartySoftwareStore } from '@/stores/partysoftware'
 import { useUnityStore } from '@/stores'
 const commonStore = useCommonStore()
 function handlePrint(id: string) {

@@ -166,7 +166,7 @@ export const usePlanStore = defineStore('plan', {
       }
       // console.log('totalAmount,', totalAmount)
       console.log('totalAmount,', sum)
-      // 根据 type 类型决定赋值给哪个变量
+      // 根据 type 类型决赋值给哪个变量
       this.data.CUItem.total_amount = limitDecimalPlaces(sum, 2)
       // if (type === 'create') {
       //   this.data.CItem.total_amount = limitDecimalPlaces(sum, 2)
@@ -282,7 +282,7 @@ export const usePlanStore = defineStore('plan', {
       this.data.loading = true
       const { index } = await this.getObjIndex(obj.id as string)
       if (index !== -1) {
-        requestBody.payment_detail_items[index]?.payment_plan_splits.push(addItem)
+        requestBody.payment_detail_items[index]?.payment_plan_splits?.push(addItem)
       }
       const response = (await planService.update(id, requestBody)) as ApiResults<any>
       if (response) {

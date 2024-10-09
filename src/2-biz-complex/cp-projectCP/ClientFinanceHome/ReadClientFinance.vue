@@ -21,6 +21,9 @@
           <template v-if="column.key === 'name'">
             {{ record.name }}
           </template>
+          <template v-if="column.key === 'IDcard'">
+            {{ record.IDcard }}
+          </template>
           <template v-else-if="column.key === 'area'">
             {{ record.area }}
           </template>
@@ -60,11 +63,11 @@
             <!-- {{ record }} -->
             <template v-if="column.key === 'index'">
               <span>
-                <a-tag color="blue">{{ record.index + '期' }}{{ '-' }}</a-tag>
+                <a-tag color="blue">{{ record.index }}</a-tag>
               </span>
             </template>
-            <template v-else-if="column.key === 'state'">
-              {{ text }}
+            <template v-else-if="column.key === 'set_state_model'">
+              <a-badge :color="setModel(text).color" :text="setModel(text).text" />
             </template>
 
             <template
@@ -166,9 +169,9 @@ function handlePrint(id: string) {
 
 interface DataItem {
   id: string
+  IDcard: string
   name: string
   area: string
-  idcard: string
   platform: string
   code: string[]
   total_amount: string
@@ -194,8 +197,8 @@ const columns = [
   },
   {
     title: '身份证号',
-    dataIndex: 'idcard',
-    key: 'idcard',
+    dataIndex: 'IDcard',
+    key: 'IDcard',
     width: '190px',
     align: columnsAlign.value
   },
@@ -264,6 +267,34 @@ const columns = [
 //   }
 // ]
 
+enum setStateModelType {
+  /**
+   * 没有到期
+   */
+  NotExpired = 0,
+  /**
+   * 已支付
+   */
+  Expired = 1
+}
+
+/**
+ * Description 支付详情-分段 函数
+ * @param {any} data:setStateModelType
+ * @returns {any}
+ */
+
+function setModel(data: setStateModelType) {
+  switch (data) {
+    case setStateModelType.NotExpired:
+      return { color: 'red', text: '未支付' }
+    case setStateModelType.Expired:
+      return { color: 'green', text: '已支付' }
+    default:
+      return { color: 'yellow', text: '未知' }
+  }
+}
+
 const inner2Columns = [
   {
     title: '期数-段数',
@@ -295,13 +326,13 @@ const inner2Columns = [
   },
   {
     title: '状态',
-    dataIndex: 'state',
-    key: 'state',
-    width: '10%',
+    dataIndex: 'set_state_model',
+    key: 'set_state_model',
+    width: '15%',
     align: inner2ColumnsAlign.value
   },
   {
-    title: '分段截止日期',
+    title: '截止日期',
     dataIndex: 'payment_date',
     key: 'payment_date',
     width: '15%',
@@ -360,7 +391,7 @@ function transformAPIData(apiData: any[]): DataItem[] {
   return apiData.map((plan: PlanTreeVO) => ({
     id: plan?.id as string,
     name: plan.client?.name as string, // 映射 API 数据中的 plan.client.name 到表格中的 name
-    idcard: '', // 假设没有身份证字段，可以留空或者从 API 数据中找到合适的字段
+    IDcard: plan.client?.IDcard as string, // 假设没有身份证字段，可以留空或者从 API 数据中找到合适的字段
     area: plan.total_area ? plan.total_area.toString() : '0',
     code: plan.unitys?.map((unity: any) => unity.code) as string[], // 提取单元的 code 作为位置
     total_amount: `￥${plan.total_amount}`, // 将总金额格式化为金额字符串
@@ -370,12 +401,21 @@ function transformAPIData(apiData: any[]): DataItem[] {
     payDate: '', // 假设 payDate 在 API 数据中没有，可以留空或者映射其他字段
     creator: 'Jack', // 如果有创建者信息，可以从 API 数据中找到合适字段
     plan: plan as PlanTreeVO,
-    payment_plan_splits: plan.payment_detail_items.reduce(
-      (accumulator: RPaymentPlanSplitVO[], current) => {
-        return accumulator.concat(current?.payment_plan_splits)
-      },
-      []
-    )
+    payment_plan_splits: plan.payment_detail_items
+      .reduce((accumulator: RPaymentPlanSplitVO[], current) => {
+        return accumulator.concat(current?.payment_plan_splits || [])
+      }, [])
+      .sort((a: any, b: any) => {
+        const [aFirst, aSecond] = a.index.split('-').map(Number) // 将字符串分割并转换为数字
+        const [bFirst, bSecond] = b.index.split('-').map(Number)
+
+        // 首先比较第一个数字
+        if (aFirst !== bFirst) {
+          return aFirst - bFirst
+        }
+        // 如果第一个数字相同，则比较第二个数字
+        return aSecond - bSecond
+      })
     // plan: plan.payment_detail_items.map((item: any, index: number) => ({
     //   id: plan.id,
     //   beginDate: `${item.period_start.format('YYYY-MM-DD')}`,

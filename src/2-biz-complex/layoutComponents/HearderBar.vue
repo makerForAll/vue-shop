@@ -60,7 +60,7 @@ onMounted(() => {
   store.readByIdForRel(props.partysoftwareId).then((data) => {
     // console.log("data", data);
 
-    getName.value = data.partyId?.name
+    getName.value = data.party?.name
   })
   headerStore.partysoftwareId = props.partysoftwareId
 })
