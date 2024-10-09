@@ -101,10 +101,11 @@ export const usePlanStore = defineStore('plan', {
     }
   },
   actions: {
-    async getObjIndex(paymentId: string) {
-      console.log('myID:', paymentId)
-      const payments = this.data?.RItems[0]?.payment_detail_items as RPaymentDetailItemVO[]
-      const index = payments.findIndex((item: RPaymentDetailItemVO) => item.id === paymentId)
+    async getPaymentObjIndex(payment: any) {
+      console.log('myID:', payment)
+      const planIndex = this.data?.RItems.findIndex((item) => item.id === payment.planId)
+      const payments = this.data?.RItems[planIndex]?.payment_detail_items as RPaymentDetailItemVO[]
+      const index = payments.findIndex((item: RPaymentDetailItemVO) => item.id === payment.id)
       console.log('getindex:', index)
       return { index }
     },
@@ -280,7 +281,7 @@ export const usePlanStore = defineStore('plan', {
       addItem: RPaymentPlanSplitVO
     ) {
       this.data.loading = true
-      const { index } = await this.getObjIndex(obj.id as string)
+      const { index } = await this.getPaymentObjIndex(obj)
       if (index !== -1) {
         requestBody.payment_detail_items[index]?.payment_plan_splits?.push(addItem)
       }

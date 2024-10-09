@@ -64,12 +64,14 @@ const handleShareArea = (obj: RPlanVO) => {
   const increase_rate = obj.increase_rate as number // 旧 百分比
   const totalAmount = obj.total_amount as number // 旧 合同总金额
   const total_area = obj.total_area as number // 旧 总面积
+  const payment_interval_months = obj.payment_interval_months as number
   // 计算出 需要变更的值
   const { average_price, initial_monthly_price, payment_detail_itemsAmount } = shareAreaFun(
     amountArr,
     increase_rate,
     totalAmount,
-    total_area
+    total_area,
+    payment_interval_months
   )
 
   // 开始处理对象

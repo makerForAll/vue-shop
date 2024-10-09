@@ -55,7 +55,7 @@
           <template v-else-if="column.key === 'operation'">
             <span class="table-operation">
               <a-button>编辑Item</a-button>
-              <a-button @click="add(record, index)">添加Item</a-button>
+              <a-button @click="add(record)">添加Item</a-button>
             </span>
           </template>
           <!-- <span v-else>{{ text }}</span> -->
@@ -68,7 +68,7 @@
             size="small"
             bordered
             :columns="inner2Columns"
-            :data-source="outerRecord.payment_plan_splits"
+            :data-source="outerRecord?.payment_plan_splits"
             :pagination="false"
           >
             <template #bodyCell="{ record, column, index }">
@@ -188,7 +188,7 @@ import { reactive, ref, type UnwrapRef } from 'vue'
 import updateBTNView from '@/2-biz-complex/cp-projectCP/PaymentPlansplit/ReadPaymentPlansplit/updateBTN.vue'
 
 const props = defineProps<{
-  partysoftwareObj: any
+  clientObj: any
 }>()
 
 const editableData: UnwrapRef<Record<string, any>> = reactive({})
@@ -200,6 +200,7 @@ const edit = (uuid: string, outerIndex: number) => {
     )[0]
   )
 }
+
 const save = (uuid: string, outerIndex: number) => {
   if (editableData[uuid]) {
     Object.assign(
@@ -212,6 +213,7 @@ const save = (uuid: string, outerIndex: number) => {
     planStore.update(planStore.data.selectID, planStore.data.CUItem)
   }
 }
+
 const cancel = (uuid: string) => {
   delete editableData[uuid]
 }
@@ -222,7 +224,9 @@ const drawerVisible = ref(false)
 // 打开抽屉并设置选中的记录
 const openDrawer = () => {
   // planStore.readById(planStore.data.selectID);
-  planStore.data.CUItem = props.partysoftwareObj.plan
+  planStore.data.CUItem = props.clientObj.plan
+  // console.log('planObj:', props.planObj)
+
   // planStore.readByPartySoftwareId();
   //   selectedRecord.value = record;
   drawerVisible.value = true
@@ -301,22 +305,26 @@ const inner2Columns = [
 ]
 
 //-----
-const add = async (obj: RPaymentDetailItemVO, indexString: any) => {
+const add = async (obj: RPaymentDetailItemVO) => {
   // console.log(toRaw(obj))
-  const { index } = await planStore.getObjIndex(obj.id as string)
+  console.log('obj------:', obj)
+
+  const { index } = await planStore.getPaymentObjIndex(obj)
+  // console.log('index:', obj.planId)
+
   // 我要添加的 item值
   const split: RPaymentPlanSplitVO = {
-    index: `${indexString + 1} - ${Number(planStore.data.CUItem.payment_detail_items[index].payment_plan_splits?.length) + 1}`,
+    index: `${index + 1} - ${Number(planStore.data.CUItem.payment_detail_items[index]?.payment_plan_splits?.length) + 1}`,
     childIndex: '0',
-    period_start: planStore.data.CUItem.payment_detail_items[index].period_start,
-    period_end: planStore.data.CUItem.payment_detail_items[index].period_end,
-    payment_amount: planStore.data.CUItem.payment_detail_items[index].amount,
+    period_start: planStore.data.CUItem.payment_detail_items[index]?.period_start,
+    period_end: planStore.data.CUItem.payment_detail_items[index]?.period_end,
+    payment_amount: planStore.data.CUItem.payment_detail_items[index]?.amount,
     remarks: '',
     deposit_deduction: 0,
     deposit_balance: planStore.data.CUItem.deposit,
     state: 0,
     set_state_model: 0,
-    payment_date: planStore.data.CUItem.payment_detail_items[index].due_date,
+    payment_date: planStore.data.CUItem.payment_detail_items[index]?.due_date,
     referencelink: '',
     operation_date: dayjs()
   }
@@ -344,12 +352,12 @@ const remove = async (obj: RPaymentPlanSplitVO, splitIndex: number, paymentIndex
 // const currentState = ref<string>('data待刷新')
 function checkAndUpdateState(obj: RPaymentPlanSplitVO) {
   const today = dayjs() // 当前日期
-  const periodStart = obj.period_start // 合同-期间开始
+  const periodStart = obj?.period_start // 合同-期间开始
   const daysDiff = periodStart.diff(today, 'day') // 差值
 
   if (obj.set_state_model === 0) {
     // 默认模式下，进行自动计算
-    if (today.isAfter(obj.period_start, 'day')) {
+    if (today.isAfter(obj?.period_start, 'day')) {
       // 过期后，过多少天
       const expiredDays = today.diff(periodStart, 'day')
       return `已过期,已超期[${expiredDays}天]`

@@ -3,7 +3,7 @@
   <div>
     <ReadClientFinanceView>
       <template #operation="{ record }">
-        <ReadPaymentHome :partysoftware-obj="record"> </ReadPaymentHome>
+        <ReadPaymentHome :client-obj="record"> </ReadPaymentHome>
       </template>
     </ReadClientFinanceView>
   </div>

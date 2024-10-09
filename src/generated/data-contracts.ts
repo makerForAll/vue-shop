@@ -348,6 +348,8 @@ export interface ReadPaymentDetailItemDTO {
   remarks?: string
   /** 依据链接 */
   referencelink?: string
+  /** 所属planID */
+  planId?: string
   /** ID */
   id?: string
   /** 方案 */
@@ -534,6 +536,8 @@ export interface CreatePaymentDetailItemDTO {
   remarks?: string
   /** 依据链接 */
   referencelink?: string
+  /** 所属planID */
+  planId?: string
   /** 方案 */
   plan?: ReadPlanDTO
   /** 分期付款计划 */
@@ -759,6 +763,8 @@ export interface TreePaymentDetailItemDTO {
   remarks?: string
   /** 依据链接 */
   referencelink?: string
+  /** 所属planID */
+  planId?: string
   /** ID */
   id?: string
   /** 分期付款计划 */
@@ -865,6 +871,8 @@ export interface UpdatePaymentDetailItemDTO {
   remarks?: string
   /** 依据链接 */
   referencelink?: string
+  /** 所属planID */
+  planId?: string
   /** 方案 */
   plan?: ReadPlanDTO
   /** 分期付款计划 */
