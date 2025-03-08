@@ -63,7 +63,7 @@ export function calculateTotalMonthsAndDays(startDateStr: Dayjs, endDateStr: Day
   const calTimes = ref(0)
   let calDate = startDate
 
-  // 计算完整月份数
+  // ! 计算完整月份数 -----
   while (calDate.isBefore(endDate)) {
     calDate = calDate.add(1, 'month')
     calTimes.value += 1

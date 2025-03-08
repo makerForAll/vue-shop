@@ -378,6 +378,12 @@ onMounted(async () => {
 
 // }
 // 筛选并计算 shared_area 的总和
+/**
+ * Description 将多个单元的面积进行 和计算
+ * @param {any} rel_store:string[]
+ * @param {any} unityItems:any[]  其他单元
+ * @returns {any}
+ */
 function calculateTotalSharedArea(rel_store: string[], unityItems: any[]): number {
   console.log('@rel_store:-', rel_store)
   console.log('@unityItems-', unityItems)
@@ -386,12 +392,12 @@ function calculateTotalSharedArea(rel_store: string[], unityItems: any[]): numbe
     console.log('@!matchedItem:', matchedItem)
     if (matchedItem) {
       console.log('Matched Item:', matchedItem, matchedItem.shared_area)
-      return total + matchedItem.shared_area
+      return parseFloat((total + matchedItem.shared_area).toFixed(3))
     }
 
     // 这里记录每次累加结果
     console.log('Total so far:', total, 'with id:', id, 'not found in unityItems')
-    return total
+    return parseFloat(total.toFixed(3))
   }, 0)
 }
 

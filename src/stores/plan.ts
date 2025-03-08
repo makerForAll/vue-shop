@@ -388,7 +388,9 @@ export const usePlanStore = defineStore('plan', {
           if (a.period_start?.isAfter(b.period_start)) return 1
           return 0
         })
-        this.data.RItems = response?.data
+        this.data.RItems = sortPaymentDetailItems(response?.data)
+        console.log('Ritems:', response?.data)
+
         this.data.total = response?.total as number
       }
       console.log('readByClientId--------', response?.data)
@@ -398,3 +400,13 @@ export const usePlanStore = defineStore('plan', {
   }
   // -------------------------------
 })
+
+function sortPaymentDetailItems(dataArray: any) {
+  return dataArray.map((item: any) => {
+    // 对每个对象的 payment_detail_items 进行排序
+    item.payment_detail_items.sort((a: any, b: any) => {
+      return dayjs(a.period_start).isBefore(dayjs(b.period_start)) ? -1 : 1
+    })
+    return item // 返回排序后的对象
+  })
+}

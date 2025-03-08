@@ -269,6 +269,20 @@
                 </tbody>
               </table>
             </div>
+            <div class="button-group" style="margin-top: 16px">
+              <a-button type="primary" @click="handlePrint(pane.id)">
+                <template #icon>
+                  <printer-outlined />
+                </template>
+                打印
+              </a-button>
+            </div>
+            <a-button type="primary" @click="handleExportWord(pane.id)" style="margin-left: 8px">
+              <template #icon>
+                <file-word-outlined />
+              </template>
+              导出Word
+            </a-button>
           </a-tab-pane>
         </a-tabs>
       </a-skeleton>
@@ -292,10 +306,18 @@ import { usePlanStore } from '@/stores/plan'
 import { useClientStore } from '@/stores/client'
 // import type{PlanBackEndDTO} from '@/api';
 import dayjs from 'dayjs'
+import html2pdf from 'html2pdf.js'
+import { VuePrintNext } from 'vue-print-next'
+import { Document, Packer, Paragraph, Table, TableCell, TableRow } from 'docx'
+import { useHeaderStore } from '@/stores/header'
+import { useCommonStore } from '@/stores/common'
+import { useUnityStore } from '@/stores'
+import { PrinterOutlined, FileWordOutlined } from '@ant-design/icons-vue'
 const headerStore = useHeaderStore()
 const planStore = usePlanStore()
 const clientStore = useClientStore()
 const unityStore = useUnityStore()
+const commonStore = useCommonStore()
 
 let activeKey = ref<string | undefined>('') // 当前 正在显示的 一栏
 
@@ -408,15 +430,81 @@ import { VuePrintNext } from 'vue-print-next'
 // import { shareAreaFun } from '../tool/shareArea/shareAreaCal';
 // import type { RPlanVO } from '@/services/vo/plan';
 // import type { CPaymentDetailItemVO, RPaymentDetailItemVO } from '@/services/vo/paymentdetailitem';
-import { useHeaderStore } from '@/stores/header'
+// import { useHeaderStore } from '@/stores/header'
 // import { cloneDeep } from 'lodash';
-import { useCommonStore } from '@/stores/common'
 // import { usePartySoftwareStore } from '@/stores/partysoftware'
-import { useUnityStore } from '@/stores'
-const commonStore = useCommonStore()
+// import { useUnityStore } from '@/stores'
+// const commonStore = useCommonStore()
 function handlePrint(id: string) {
   commonStore.insertDynamicCSS('portrait')
-  new VuePrintNext({ el: `#printMe${id}` /** 其他参数 */ })
+
+  const printOptions = {
+    el: `#printMe${id}`,
+    preserveStyleAndCss: true,
+    useImgToPrint: false,
+    useNativePrint: true,
+    beforeOpenPrintWindow() {
+      const style = document.createElement('style')
+      style.textContent = `
+        @page {
+          margin: 10mm;
+        }
+        @media print {
+          body {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+        }
+      `
+      document.head.appendChild(style)
+    }
+  }
+
+  new VuePrintNext(printOptions)
+}
+
+// 新增导出 Word 功能
+function handleExportWord(id: string) {
+  const element = document.getElementById(`printMe${id}`)
+  if (!element) {
+    console.error('找不到导出元素')
+    return
+  }
+
+  // 创建文档
+  const doc = new Document({
+    sections: [
+      {
+        properties: {},
+        children: [
+          new Table({
+            rows: Array.from(element.querySelectorAll('tr')).map((tr) => {
+              return new TableRow({
+                children: Array.from(tr.querySelectorAll('td, th')).map((cell) => {
+                  return new TableCell({
+                    children: [new Paragraph({ text: cell.textContent || '' })]
+                  })
+                })
+              })
+            })
+          })
+        ]
+      }
+    ]
+  })
+
+  // 导出为 Word 文档
+  Packer.toBlob(doc).then((blob) => {
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    document.body.appendChild(a)
+    a.style.display = 'none'
+    a.href = url
+    a.download = `打印文档_${dayjs().format('YYYY-MM-DD_HH:mm:ss')}.docx`
+    a.click()
+    window.URL.revokeObjectURL(url)
+    document.body.removeChild(a)
+  })
 }
 
 // const handleShareArea = (obj: RPlanVO) => { // 创建分摊
@@ -523,6 +611,22 @@ td {
 @media print {
   body {
     height: auto;
+  }
+}
+
+.button-group {
+  margin-bottom: 16px;
+}
+
+.button-group {
+  margin: 16px 0;
+  text-align: right;
+}
+
+/* 确保按钮在打印时不显示 */
+@media print {
+  .button-group {
+    display: none !important;
   }
 }
 </style>

@@ -23,9 +23,9 @@ class PartyService {
           const constraints = err.constraints // 获取验证失败的详细信息
 
           // 输出错误信息
-          console.error(`Field: ${field}`)
+          // console.error(`Field: ${field}`)
           Object.values(constraints).forEach((msg) => {
-            console.error(`Error: ${msg}`)
+            // console.error(`Error: ${msg}`)
           })
         })
       } else {

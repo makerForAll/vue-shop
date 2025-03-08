@@ -308,7 +308,7 @@ const inner2Columns = [
 const add = async (obj: RPaymentDetailItemVO) => {
   // console.log(toRaw(obj))
   console.log('obj------:', obj)
-
+  console.log('clientObj---:', props.clientObj)
   const { index } = await planStore.getPaymentObjIndex(obj)
   // console.log('index:', obj.planId)
 

@@ -247,7 +247,7 @@
                         v-for="(item, index) in internalForm[field.name]"
                         :key="`${field?.name}_${item[index]}`"
                       >
-                        {{ item }}
+                        <!-- {{ item }} -->
                         <a-col
                           justify="center"
                           :span="4"
@@ -487,7 +487,7 @@
               </a-col>
             </template>
           </a-row>
-          {{ internalForm }}
+          <!-- {{ internalForm }} -->
         </a-skeleton>
       </a-form>
 

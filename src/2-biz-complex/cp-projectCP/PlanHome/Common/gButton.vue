@@ -1,3 +1,4 @@
+<!-- 分摊后 -->
 <template>
   <ButtonSlotView
     :buttonStyle="{ color: 'green' }"
@@ -47,12 +48,26 @@ const handleShareArea = (obj: RPlanVO) => {
   // cloneDeep();-----------------------------
   const getObj = cloneDeep(obj) // ------  进行 深拷贝。之后 要把减免去掉重新计算 支付明细周期
   getObj.rent_free_months = 0
+  // 虽然减免了1个月，但是没有修改 它的价格，需要减免后计算的价格。
+  // ----------------------------
+  /*
+  1.总金额
+
+  */
+  // const calPrice = getObj.total_amount / getObj.contract_duration_days
+
+  // ----------------------------
+
+  console.log('getObj:', getObj)
   // ----
   // 放入plan的基础数据，生成没有减免的 新的 支付明细的数据
+  // ? 为何 带有免租期1月的，分摊图确把分摊的算入第4年。明明只有3年
   const { paymentDetails }: { paymentDetails: CPaymentDetailItemVO[] } = paymentMainFun(
     getObj as RPlanVO,
     '0'
   )
+
+  console.log('paymentDetails-^:', paymentDetails)
   // planStore.data.paymentAmountArr = paymentAmountArr;
   // 将没有减免条件情况下生成支付明细数据给 getObj
   getObj.payment_detail_items = paymentDetails as RPaymentDetailItemVO[] // 新明细周期
@@ -60,6 +75,7 @@ const handleShareArea = (obj: RPlanVO) => {
 
   // 函数需要的值
   const paymentItems = getObj.payment_detail_items as RPaymentDetailItemVO[] // 新明细周期
+  console.log('paymentItems:', paymentItems)
   const amountArr = paymentItems.map((item) => item.amount)
   const increase_rate = obj.increase_rate as number // 旧 百分比
   const totalAmount = obj.total_amount as number // 旧 合同总金额
