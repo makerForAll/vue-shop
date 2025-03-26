@@ -149,7 +149,10 @@ const { run, loading, current, pageSize } = usePagination(queryData, {
     pageSizeKey: 'pagesize',
     totalKey: 'total',
     totalPageKey: 'totalPage'
-  }
+  },
+  refreshOnWindowFocus: true,
+  refocusTimespan: 10 * 1000, // 2s
+  errorRetryCount: 3 // 请求失败后，重试次数
 })
 
 const pagination = computed(() => ({

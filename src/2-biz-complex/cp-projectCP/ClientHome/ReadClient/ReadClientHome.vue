@@ -470,7 +470,9 @@ const { run, loading, current, pageSize } = usePagination(queryData, {
     pageSizeKey: 'pagesize',
     totalKey: 'total',
     totalPageKey: 'totalPage'
-  }
+  },
+  refreshOnWindowFocus: true,
+  refocusTimespan: 10 * 1000 // 2s
   // manual: true // 禁止自动请求
 })
 
